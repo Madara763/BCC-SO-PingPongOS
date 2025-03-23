@@ -17,8 +17,8 @@
 
 typedef struct queue_t
 {
-   struct queue_t *prev ;  // aponta para o elemento anterior na fila
-   struct queue_t *next ;  // aponta para o elemento seguinte na fila
+  struct queue_t *prev ;  // aponta para o elemento anterior na fila
+  struct queue_t *next ;  // aponta para o elemento seguinte na fila
 } queue_t ;
 
 //------------------------------------------------------------------------------
@@ -27,12 +27,15 @@ typedef struct queue_t
 
 int queue_size (queue_t *queue){
    
-  queue_t *ini = queue ;       // aponta elemento que sera tratado como inicial
+  if(!queue)
+    return 0; 
+
+  queue_t *ini = queue ;       // aponta elemento que sera tratado como inicial 
   queue_t *aux = queue->next;  // Auxiliar
 
   int tam=1;
 
-  while(aux != ini && aux != NULL){
+  while(aux != ini){
     tam++;
     aux = aux->next;
   }
@@ -49,15 +52,21 @@ int queue_size (queue_t *queue){
 
 void queue_print (char *name, queue_t *queue, void print_elem (void*) ) {
   queue_t *ini = queue ;  // aponta elemento que sera tratado como inicial
-  queue_t *aux = queue->next;  // Auxiliar
+  queue_t *aux = NULL;
+  
+  if(ini)
+    aux = ini->next;   // Auxiliar
 
-  printf("%s", name);
-   
+  printf("%s [", name);
+  print_elem(ini);
+  
   while(aux != ini && aux != NULL){
+    printf(" ");
     print_elem(aux);
     aux = aux->next;
   }
-
+  
+  printf("]\n");
 }
 
 //------------------------------------------------------------------------------
@@ -70,20 +79,20 @@ void queue_print (char *name, queue_t *queue, void print_elem (void*) ) {
 
 int queue_append (queue_t **queue, queue_t *elem){
   //Verificacoes
-  if(queue == NULL){
+  if(!queue){
     fprintf(stderr, "A fila nao existe\n");
       return -1;
     }
-  if(elem == NULL){
+  if(!elem){
     fprintf(stderr, "O elemento nao existe\n");
     return -2;
   }
-  if(elem->next != NULL || elem->prev != NULL ){
+  if(elem->next || elem->prev ){
     fprintf(stderr, "O elemento esta em outra fila\n");
     return -3;
   }
 
-  if( (*queue) == NULL){  //Fila vazia
+  if(!(*queue)){  //Fila vazia
     elem->prev = elem;
     elem->next = elem;
     (*queue) = elem;
@@ -111,52 +120,60 @@ int queue_append (queue_t **queue, queue_t *elem){
 
 int queue_remove (queue_t **queue, queue_t *elem) {
   //Verificacoes
-  if(queue == NULL){
+  if(!queue){
     fprintf(stderr, "A fila nao existe\n");
       return -1;
     }
-  if((*queue) == NULL){
+  if(!(*queue)){
     fprintf(stderr, "A fila esta vazia\n");
     return -2;
   }
-  if(elem == NULL){
+  if(!elem){
     fprintf(stderr, "O elemento nao existe\n");
     return -3;
-  }
-  if(elem->next != NULL || elem->prev != NULL ){
-    fprintf(stderr, "O elemento esta em outra fila\n");
-    return -4;
   }
   
   //Verifica caso especial
   //Se o elemento e o unico na fila 
-  if( *queue == elem){
+  if( *queue == elem && elem->next == elem && elem->prev == elem ){
     elem->next = NULL;
     elem->prev = NULL;
     *queue = NULL;
     return 0;
   }
 
-  //Verifica se o elemento pertence a fila
   queue_t *ini = *queue ;         // aponta elemento que sera tratado como inicial
-  queue_t *aux = (*queue)->next;  // Auxiliar
-
-  while( aux != ini ){
+  
+  //Se for o primeiro da fila
+  if( ini == elem){
+    elem->next->prev = elem->prev;
+    elem->prev->next = elem->next;
+    *queue = elem->next;
     
-    //Se achar o elemento na fila, remove ele
-    if( aux == elem){
-      elem->next->prev = elem->prev;
-      elem->prev->next = elem->next;
-      
-      elem->next = NULL;
-      elem->prev = NULL; 
-      return 0;
-    }
-    aux = aux->next;
+    elem->next = NULL;
+    elem->prev = NULL; 
+    return 0;
   }
 
-  //Caso o elemento nao exista na fila
-  return -5;
+  //Verifica se o elemento pertence a fila
+  //Se achar o elemento na fila, remove ele
+  queue_t *aux = (*queue)->next;  // Auxiliar
+  
+  while( aux != ini && aux != elem){
+    aux = aux->next;
+  }
+  //Se achar o elemento na fila, remove ele
+  if( aux == elem){
+    elem->next->prev = elem->prev;
+    elem->prev->next = elem->next;
+    
+    elem->next = NULL;
+    elem->prev = NULL; 
+    return 0;
+  }
+
+  //Caso o elemento nao existe na fila
+  return -4;
 
 }
 
