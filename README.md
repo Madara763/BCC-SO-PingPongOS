@@ -13,8 +13,7 @@ No geral, sao funcoes de manipulacao de uma fila circular duplamente encadeada g
   testafila 
 ```
 ### [Trocas de Contexto](https://wiki.inf.ufpr.br/maziero/doku.php?id=so:trocas_de_contexto)
-
-
+Consiste em estudar o código em ``` contexts.c ``` e responder algumas perguntas(especificado no enunciado).
 
 
 
