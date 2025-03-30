@@ -1,4 +1,4 @@
-# Respostas das [questoes].(https://wiki.inf.ufpr.br/maziero/doku.php?id=so:trocas_de_contexto)
+# Respostas das [questoes].(https://wiki.inf.ufpr.br/maziero/doku.php?id=so:trocas_de_contexto).
 
 ## Questao 1:
 
