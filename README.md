@@ -14,6 +14,17 @@ No geral, sao funcoes de manipulacao de uma fila circular duplamente encadeada g
 ```
 ### [Trocas de Contexto](https://wiki.inf.ufpr.br/maziero/doku.php?id=so:trocas_de_contexto)
 Consiste em estudar o código em ``` contexts.c ``` e responder algumas perguntas(especificado no enunciado).
+Respostas em ```respostas_pq.md```.
+
+### [Gestão de Tarefas](https://wiki.inf.ufpr.br/maziero/doku.php?id=so:gestao_de_tarefas)
+Construir as funções básicas de gestão de tarefas usando as funções de troca de contexto vistas no projeto anterior. 
+Arquivos
+```
+ppos_data.h
+ppos.h
+ppos_core.c
+```
+
 
 
 
