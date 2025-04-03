@@ -21,6 +21,7 @@ typedef struct task_t
 //------------------------------------------------------------------------------
 // Defines =====================================================================
 #define STATUS_MAIN 0
+#define STACK_TAM 1024
 
 // Variaveis Globais============================================================
 
@@ -32,16 +33,30 @@ int ID_Global=0; //contem o valor do prox id de task que sera criado
 
 // Inicializa uma task, recebe ponteiros *prev, *next, e status
 // Retorna o id da tarefa, retorna um valor negativo em caso de erro
+// O cria_stack indica se precisa alocar a pilha para o novo contexto, 0 se nao precisa 1 se precisa
 
-int task_cria(task_t *task, task_t *prev, task_t *next, short status){
+int task_cria(task_t *task, task_t *prev, task_t *next, short status, short cria_stack){
   if(!task)
     return -1;
 
   task->next = next;
   task->prev = prev;
   task->id = ID_Global;
-  task->status = status;
   getcontext(&(task->context)); 
+  task->status = status;
+
+  if(cria_stack){
+    char *stack = maloc(STACK_TAM);
+    if(stack){
+      task->context.uc_stack.ss_size = STACK_TAM;
+      task->context.uc_stack.ss_sp = stack;
+      task->context.uc_stack.ss_flags = 0;
+    }
+    else{
+      perror ("Erro na criação da pilha: ") ;
+      exit (1) ;
+    }
+  }
 
   ID_Global ++;
 
@@ -52,7 +67,7 @@ int task_cria(task_t *task, task_t *prev, task_t *next, short status){
 void ppos_init (){
   
   //inicia o contexto da main
-  task_cria(&contextoMain, NULL, NULL, STATUS_MAIN);
+  task_cria(&contextoMain, NULL, NULL, STATUS_MAIN, 0);
   
   // desativa o buffer da saida padrao (stdout), usado pela função printf 
   setvbuf (stdout, 0, _IONBF, 0) ;
@@ -62,9 +77,20 @@ void ppos_init (){
 // gerência de tarefas =========================================================
 
 // Inicializa uma nova tarefa. Retorna um ID> 0 ou erro.
-int task_init (task_t *task,			// descritor da nova tarefa
-              void  (*start_func)(void *),	// funcao corpo da tarefa
-              void   *arg) ;			// argumentos para a tarefa
+// Recebe:
+// descritor da nova tarefa
+// funcao corpo da tarefa
+// argumentos para a tarefa
+int task_init (task_t *task, void  (*start_func)(void *),	void   *arg) {
+
+  if(!task || !start_func )
+    return -1;
+  
+
+
+
+
+}			
 
 // retorna o identificador da tarefa corrente (main deve ser 0)
 int task_id () ;
