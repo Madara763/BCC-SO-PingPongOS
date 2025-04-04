@@ -11,6 +11,7 @@ $(prog):	$(obj)
 # regras de compilação
 $(prog).o:	$(prog).c
 ppos.o:	ppos_core.c
+	gcc $(CFLAGS) -c -o ppos.o ppos_core.c
 
 # remove arquivos temporários
 clean:

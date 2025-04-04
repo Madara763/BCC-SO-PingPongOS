@@ -8,6 +8,8 @@
 #define __PPOS_DATA__
 
 #include <ucontext.h>		// biblioteca POSIX de trocas de contexto
+#include <stdio.h>      // mensagens de erro
+#include <stdlib.h>     // biblioteca contem o malloc
 
 // Estrutura que define um Task Control Block (TCB)
 typedef struct task_t
