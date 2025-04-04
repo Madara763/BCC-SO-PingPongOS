@@ -3,7 +3,6 @@
 // 02/04/25
 
 #include"ppos.h"
-#include"ppos_data.h"
 
 #include <stdio.h>
 //------------------------------------------------------------------------------
@@ -25,11 +24,11 @@ typedef struct task_t
 
 // Variaveis Globais============================================================
 
-task_t contextoMain, contextoAnterior;
+task_t contextoMain, *contextoAnterior, *contextoAtual;
 int ID_Global=0; //contem o valor do prox id de task que sera criado
 
 
-// Funções Gerais ==============================================================
+// Funções Internas=============================================================
 
 // Inicializa uma task, recebe ponteiros *prev, *next, e status
 // Retorna o id da tarefa, retorna um valor negativo em caso de erro
@@ -63,12 +62,17 @@ int task_cria(task_t *task, task_t *prev, task_t *next, short status, short cria
   return task->id;
 }
 
+// Funções Gerais ==============================================================
+
 // Inicializa o sistema operacional; deve ser chamada no inicio do main()
 void ppos_init (){
   
   //inicia o contexto da main
   task_cria(&contextoMain, NULL, NULL, STATUS_MAIN, 0);
-  
+
+  //Aponta o contexto atual para o main
+  contextoAtual = &contextoMain;
+
   // desativa o buffer da saida padrao (stdout), usado pela função printf 
   setvbuf (stdout, 0, _IONBF, 0) ;
 
@@ -86,18 +90,30 @@ int task_init (task_t *task, void  (*start_func)(void *),	void   *arg) {
   if(!task || !start_func )
     return -1;
   
+  makecontext(&(task->context), start_func, 1, arg );
 
-
-
-
+  return task->id;
 }			
 
 // retorna o identificador da tarefa corrente (main deve ser 0)
-int task_id () ;
+int task_id () {
+  return contextoAtual->id;
+}
 
 // Termina a tarefa corrente com um status de encerramento
-void task_exit (int exit_code) ;
+void task_exit (int exit_code) {
+  task_switch(&contextoMain);
+}
 
 // alterna a execução para a tarefa indicada
-int task_switch (task_t *task) ;
+// Retorna 0 se der certo e um valor negativo em caso de erro
+int task_switch (task_t *task) {
+  if(!task)
+    return -1;
+
+  contextoAnterior = contextoAtual;
+  contextoAtual = task;
+  swapcontext(&(contextoAnterior->context), &(task->context));
+  return 0;
+}
 
