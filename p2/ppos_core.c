@@ -74,6 +74,11 @@ void ppos_init (){
   //Aponta o contexto atual para o main
   contextoAtual = &contextoMain;
 
+  //debug
+  #ifndef DEBUG
+  printf("DEBUG: (ppos_init) id main = %d\n", contextoMain.id);
+  #endif
+
   // desativa o buffer da saida padrao (stdout), usado pela função printf 
   setvbuf (stdout, 0, _IONBF, 0) ;
 
@@ -94,6 +99,11 @@ int task_init (task_t *task, void  (*start_func)(void *),	void   *arg) {
   task_cria(task, NULL, NULL, STATUS_INI, 1);
 
   makecontext(&(task->context), (void *) start_func , 1, arg );
+  
+  //debug
+  #ifndef DEBUG
+  printf("DEBUG: (task_init) id criado = %d\n", task->id);
+  #endif
 
   return task->id;
 }			
@@ -105,13 +115,14 @@ int task_id () {
 
 // Termina a tarefa corrente com um status de encerramento
 void task_exit (int exit_code) {
+  //debug
+  #ifndef DEBUG
+  printf("DEBUG: (task_exit) id atual = %d\n", contextoAtual->id);
+  #endif
   
-  if (contextoAtual != &contextoMain) {
-    free(contextoAnterior->context.uc_stack.ss_sp);  // Libera a pilha da tarefa
-  }
-  
-  setcontext(&(contextoMain.context));
+  contextoAnterior = contextoAtual;
   contextoAtual = &contextoMain;
+  setcontext(&(contextoMain.context));
 }
 
 // alterna a execução para a tarefa indicada
@@ -119,6 +130,12 @@ void task_exit (int exit_code) {
 int task_switch (task_t *task) {
   if(!task)
     return -1;
+
+  //debug
+  #ifndef DEBUG
+  printf("DEBUG: (task_swith) id atual = %d\n", contextoAtual->id);
+  printf("DEBUG: (task_swith) id novo = %d\n", task->id);
+  #endif
 
   contextoAnterior = contextoAtual;
   contextoAtual = task;

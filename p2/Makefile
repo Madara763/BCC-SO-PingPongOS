@@ -1,7 +1,12 @@
-CFLAGS = -Wall -g -std=c99  # gerar "warnings" detalhados e infos de depuração
+CFLAGS = -Wall -g -std=c99 $(DEBUG_FLAGS) # gerar "warnings" detalhados e infos de depuração
  
 obj = $(prog).o ppos.o
 prog = testep3
+
+# Se DEBUG=1, define a flag -DDEBUG para o compilador
+DEBUG_FLAGS = -DDEBUG
+
+
 # regra default (primeira regra)
 all:	$(prog)
 

@@ -8,51 +8,31 @@
 #include <stdlib.h>
 #include "ppos.h"
 
-task_t Ping, Pong ;
+#define MAXTASK 1000
 
-// corpo da thread Ping
-void BodyPing (void * arg)
+task_t task ;
+
+// corpo das threads
+void BodyTask (void * arg)
 {
-   int i ;
-   char* name = (char *) arg ;
-
-   printf ("%s: inicio\n", name) ;
-   for (i=0; i<4; i++)
-   {
-      printf ("%s: %d\n", name, i) ;
-      //task_switch (&Pong);
-   }
-   printf ("%s: fim\n", name) ;
-   task_exit (0) ;
-}
-
-// corpo da thread Pong
-void BodyPong (void * arg)
-{
-   int i ;
-   char* name = (char *) arg ;
-
-   printf ("%s: inicio\n", name) ;
-   for (i=0; i<4; i++)
-   {
-      printf ("%s: %d\n", name, i) ;
-      //task_switch (&Ping);
-   }
-   printf ("%s: fim\n", name) ;
+   printf ("Estou na tarefa %5d\n", task_id()) ;
    task_exit (0) ;
 }
 
 int main (int argc, char *argv[])
 {
+   int i ;
+
    printf ("main: inicio\n");
 
    ppos_init () ;
 
-   task_init (&Ping, BodyPing, "    Ping") ;
-   task_init (&Pong, BodyPong, "        Pong") ;
-
-   task_switch (&Ping) ;
-   task_switch (&Pong) ;
+   // inicia MAXTASK tarefas, ativando cada uma apos sua criacao
+   for (i=0; i<MAXTASK; i++)
+   {
+     task_init (&task, BodyTask, NULL) ;
+     task_switch (&task) ;
+   }
 
    printf ("main: fim\n");
 
