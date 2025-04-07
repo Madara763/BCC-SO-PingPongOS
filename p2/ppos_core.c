@@ -5,6 +5,7 @@
 #include"ppos.h"
 
 //------------------------------------------------------------------------------
+
 //Formato da estrutura que define um Task Control Block (TCB) declarado no .h
 /*
 typedef struct task_t
@@ -16,7 +17,9 @@ typedef struct task_t
   // ... (outros campos serão adicionados mais tarde)
 } task_t ;
 */
+
 //------------------------------------------------------------------------------
+
 // Defines =====================================================================
 #define STATUS_MAIN 0
 #define STATUS_INI 0
@@ -122,6 +125,7 @@ void task_exit (int exit_code) {
   
   contextoAnterior = contextoAtual;
   contextoAtual = &contextoMain;
+  
   setcontext(&(contextoMain.context));
 }
 
