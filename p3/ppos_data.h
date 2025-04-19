@@ -10,14 +10,16 @@
 #include <ucontext.h>		// biblioteca POSIX de trocas de contexto
 #include <stdio.h>      // mensagens de erro
 #include <stdlib.h>     // biblioteca contem o malloc
+#include <valgrind/valgrind.h> //Biblioteca para uso do vg_id do valgrind
 
 // Estrutura que define um Task Control Block (TCB)
 typedef struct task_t
 {
   struct task_t *prev, *next ;		// ponteiros para usar em filas
-  int id ;				// identificador da tarefa
-  ucontext_t context ;			// contexto armazenado da tarefa
-  short status ;			// pronta, rodando, suspensa, ...
+  int id ;				                // identificador da tarefa
+  ucontext_t context ;			      // contexto armazenado da tarefa
+  short status ;			            // pronta, rodando, suspensa, ...
+  int vg_id ;		                  // ID da pilha da tarefa no Valgrind
   // ... (outros campos serão adicionados mais tarde)
 } task_t ;
 

@@ -12,6 +12,9 @@
 // estruturas de dados necessárias neste projeto
 #include "ppos_data.h"
 
+//Biblioteca de filas
+#include "queue.h"
+
 // macros importantes ==========================================================
 
 // habilita compatibilidade POSIX no MacOS X (para ucontext.h)

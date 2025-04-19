@@ -8,6 +8,7 @@
 #include <stdlib.h>
 #include "ppos.h"
 
+
 task_t Pang, Peng, Ping, Pong, Pung ;
 
 // corpo das threads
@@ -38,5 +39,6 @@ int main (int argc, char *argv[])
    task_init (&Pung, Body, "                    Pung") ;
 
    printf ("main: fim\n");
+   
    task_exit (0);
 }

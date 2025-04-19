@@ -1,10 +1,12 @@
+CC = gcc
 CFLAGS = -Wall -g -std=c99 $(DEBUG_FLAGS) # gerar "warnings" detalhados e infos de depuração
  
-obj = $(prog).o ppos.o
+obj = $(prog).o ppos.o queue.o
 prog = testep3
 
 # Se DEBUG=1, define a flag -DDEBUG para o compilador
-DEBUG_FLAGS = -DDEBUG
+debug:	CFLAGS += -DDEBUG
+debug:	all
 
 
 # regra default (primeira regra)
@@ -16,7 +18,11 @@ $(prog):	$(obj)
 # regras de compilação
 $(prog).o:	$(prog).c
 ppos.o:	ppos_core.c
-	gcc $(CFLAGS) -c -o ppos.o ppos_core.c
+	$(CC) $(CFLAGS) -c -o ppos.o ppos_core.c 
+
+queue.o: queue.c
+	$(CC) $(CFLAGS) -c -o queue.o queue.c
+
 
 # remove arquivos temporários
 clean:
