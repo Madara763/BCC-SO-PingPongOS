@@ -20,6 +20,7 @@ typedef struct task_t
   ucontext_t context ;			      // contexto armazenado da tarefa
   short status ;			            // pronta, rodando, suspensa, ...
   int vg_id ;		                  // ID da pilha da tarefa no Valgrind
+  char* stack;                    // Ponteiro para a pilha alocada
   // ... (outros campos serão adicionados mais tarde)
 } task_t ;
 

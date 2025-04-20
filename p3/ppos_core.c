@@ -36,8 +36,8 @@ typedef struct task_t
 
 task_t contextoMain, *contextoAnterior = NULL, *contextoAtual = NULL, despachante_ptr;
 int ID_Global=0;              //Contem o valor do prox id de task que sera criado
-queue_t *fila_tasks = NULL;           //Cria a fila de tarefas
-queue_t *fila_tasks_prontas = NULL;   //Cria a fila de tarefas
+queue_t *fila_tasks = NULL;              //Cria a fila de tarefas
+queue_t *fila_tasks_terminadas = NULL;   //Cria a fila de tarefas finalizadas para liberar memoria
 
 // Funções Internas=============================================================
 
@@ -79,16 +79,16 @@ int task_cria(task_t *task, task_t *prev, task_t *next, short status, short cria
 
 //Libera a memoria da task atual
 //Retira o regitro do valgrind
-void free_stack_val(){
+void free_stack_val(task_t* task){
   //debug
   #ifdef DEBUG
   printf("DEBUG: (free_stack_val) Liberando a pilha\n");
   #endif 
   // libera a pilha da tarefa
-  //free(contextoAtual->context.uc_stack.ss_sp) ;
+  free(task->context.uc_stack.ss_sp) ;
 
   // dezfaz o registro da pilha no Valgrind
-  VALGRIND_STACK_DEREGISTER (contextoAtual->vg_id);
+  VALGRIND_STACK_DEREGISTER (task->vg_id);
 }
 
 //Atualiza o ponteiro de proxima tarefa, coloca a atual no final da fila
@@ -96,6 +96,7 @@ void free_stack_val(){
 task_t* scheduler(){
   return (task_t*)fila_tasks;
 }
+
 
 //Funcao e chamada sempre que uma tarefa eh encerrada
 //Coloca a proxima tarefa em execucao
@@ -159,9 +160,21 @@ void despachante(void *ptr){
   #ifdef DEBUG
   printf("DEBUG: (despachante) Encerrando o despachante\n");
   #endif 
-  free_stack_val();
-  exit(0);
 
+  // Libera a memoria das tasks terminadas
+  while(queue_size(fila_tasks_terminadas)){
+    //debug
+    #ifdef DEBUG
+    printf("DEBUG: (despachante) queue_size(fila_tasks_finalizadas) = %d\n",queue_size(fila_tasks));
+    #endif 
+    proxima = (task_t*)fila_tasks_terminadas;
+    free_stack_val(proxima);
+    queue_remove(&fila_tasks_terminadas, (queue_t*)proxima);
+  }//while 
+
+  //Precisa de um outro contexto para liberar a stack do despachante
+  //free_stack_val(&despachante_ptr); 
+  exit(0);
 };
 
 // Funções Gerais ==============================================================
@@ -233,10 +246,8 @@ void task_exit (int exit_code) {
 
   //Se outra task chamar o task_exit, retorna para o despachante
   //Se o despachante chamar, encerra o programa
-  if(contextoAtual != &despachante_ptr){
-    free_stack_val();
+  if(contextoAtual != &despachante_ptr)
     contextoAtual->status = TERMINADA;
-  }
 
   //Volta para o despachante
   task_yield();
@@ -274,8 +285,10 @@ void task_yield (){
   printf("DEBUG: (task_yield) id atual = %d\n", contextoAtual->id);
   #endif
 
-  if(contextoAtual->status == TERMINADA)
+  if(contextoAtual->status == TERMINADA){
     queue_remove(&fila_tasks, (queue_t*)contextoAtual);
+    queue_append(&fila_tasks_terminadas, (queue_t*)contextoAtual);   
+  }
   else{
     contextoAtual->status = PRONTA;
     queue_remove(&fila_tasks, (queue_t*)contextoAtual);
