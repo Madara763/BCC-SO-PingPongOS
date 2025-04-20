@@ -42,7 +42,7 @@ int queue_size (queue_t *queue){
   while(aux != ini){
     //debug
     #ifdef DEBUG
-    printf("DEBUG: (queue_size) aux->id = %d\n", ((task_t*) queue)->id);
+    printf("DEBUG: (queue_size) aux->id = %d\n", ((task_t*) aux)->id);
     #endif
     tam++;
     aux = aux->next;
@@ -145,6 +145,10 @@ int queue_append (queue_t **queue, queue_t *elem){
 // Retorno: 0 se sucesso, <0 se ocorreu algum erro
 
 int queue_remove (queue_t **queue, queue_t *elem) {
+  //debug
+  #ifdef DEBUG
+  printf("DEBUG: (queue_remove) Entrou no remove.\n");
+  #endif
   //Verificacoes
   if(!queue){
     fprintf(stderr, "A fila nao existe\n");
@@ -172,7 +176,6 @@ int queue_remove (queue_t **queue, queue_t *elem) {
   
   //Se for o primeiro da fila
   if( ini == elem){
-    printf("aqui");
     elem->next->prev = elem->prev;
     elem->prev->next = elem->next;
     *queue = elem->next;
@@ -187,12 +190,10 @@ int queue_remove (queue_t **queue, queue_t *elem) {
   queue_t *aux = (*queue)->next;  // Auxiliar
   
   while( aux != ini && aux != elem){
-    printf("aqui2");
     aux = aux->next;
   }
   //Se achar o elemento na fila, remove ele
   if( aux == elem){
-    printf("aqui3");
     elem->next->prev = elem->prev;
     elem->prev->next = elem->next;
     

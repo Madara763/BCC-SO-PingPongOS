@@ -25,7 +25,7 @@ typedef struct task_t
 // Defines =====================================================================
 #define STATUS_MAIN 0
 #define STATUS_INI 0
-#define STACK_TAM 64*1024
+#define STACK_TAM 128*1024
 
 //status das tarefas
 #define PRONTA 0
@@ -36,8 +36,8 @@ typedef struct task_t
 
 task_t contextoMain, *contextoAnterior = NULL, *contextoAtual = NULL, despachante_ptr;
 int ID_Global=0;              //Contem o valor do prox id de task que sera criado
-queue_t *fila_tasks;           //Cria a fila de tarefas
-queue_t *fila_tasks_prontas;   //Cria a fila de tarefas
+queue_t *fila_tasks = NULL;           //Cria a fila de tarefas
+queue_t *fila_tasks_prontas = NULL;   //Cria a fila de tarefas
 
 // Funções Internas=============================================================
 
@@ -91,7 +91,7 @@ void free_stack_val(){
 //Atualiza o ponteiro de proxima tarefa, coloca a atual no final da fila
 //Retorna um ponteiro para a tarefa a ser executada no momento
 task_t* scheduler(){
-  return (task_t*)fila_tasks->next;
+  return (task_t*)fila_tasks;
 }
 
 //Funcao e chamada sempre que uma tarefa eh encerrada
@@ -99,16 +99,25 @@ task_t* scheduler(){
 //Se nao houver mais tarefas para tomar cpu, encerra o programa chmando o tes_exit(0)
 void despachante(void *ptr){
   // retira o dispatcher da fila de prontas, para evitar que ele ative a si próprio
-  queue_remove (&fila_tasks_prontas, (queue_t*) &despachante_ptr);
+  queue_remove (&fila_tasks, (queue_t*) &despachante_ptr);
 
   //debug
   #ifdef DEBUG
-  printf("DEBUG: (despachante) fila_task->id = %d\n", ((task_t*) fila_tasks)->id);
+  if(fila_tasks)
+    printf("DEBUG: (despachante) primeiro na fila_task->id = %d\n", ((task_t*) fila_tasks)->id);
+  else
+    printf("DEBUG: (despachante) primeiro na fila_task = NULL\n");
   #endif
 
+  //queue_size(fila_tasks);
+  //exit(0);
+
   task_t* proxima;
-  while(queue_size((queue_t*)&fila_tasks)){
-    
+  while(queue_size(fila_tasks)){
+    //debug
+    #ifdef DEBUG
+    printf("DEBUG: (despachante) queue_size(fila_tasks) = %d\n",queue_size(fila_tasks));
+    #endif 
     proxima = scheduler();
     
     if(proxima){
@@ -117,11 +126,21 @@ void despachante(void *ptr){
       switch (contextoAtual->status)
       {
       case PRONTA:  //Remove da fila de prontas e coloca para exec dnv
-        queue_remove(&fila_tasks_prontas, (queue_t*)contextoAtual);
-        queue_append(&fila_tasks, (queue_t*)contextoAtual);
-        break;
+        //debug
+        #ifdef DEBUG
+        printf("DEBUG: (despachante) switch: PRONTA\n");
+        #endif 
+        queue_remove(&fila_tasks, (queue_t*)contextoAtual);
+        if(contextoAtual != &despachante_ptr){
+          queue_append(&fila_tasks, (queue_t*)contextoAtual);
+        }
+          break;
       case TERMINADA: //Remove a tarefa da fila de prontas e ja era
-        queue_remove(&fila_tasks_prontas, (queue_t*)contextoAtual);
+        //debug
+        #ifdef DEBUG
+        printf("DEBUG: (despachante) switch: TERMINADA\n");
+        #endif 
+        queue_remove(&fila_tasks, (queue_t*)contextoAtual);
         break;
       case SUSPENSA:
         break;
@@ -133,8 +152,12 @@ void despachante(void *ptr){
     }//if proxima    
   }//while existir tarefas para serer executadas
 
-  despachante_ptr.status = TERMINADA;
-  task_exit(0);
+  //debug
+  #ifdef DEBUG
+  printf("DEBUG: (despachante) Encerrando o despachante\n");
+  #endif 
+  free_stack_val();
+  exit(0);
 
 };
 
@@ -202,6 +225,7 @@ void task_exit (int exit_code) {
   //debug
   #ifdef DEBUG
   printf("DEBUG: (task_exit) id atual = %d\n", contextoAtual->id);
+  printf("DEBUG: (task_exit) id despachante = %d\n", despachante_ptr.id);
   #endif
 
   //Se outra task chamar o task_exit, retorna para o despachante
@@ -209,10 +233,6 @@ void task_exit (int exit_code) {
   if(contextoAtual != &despachante_ptr){
     free_stack_val();
     contextoAtual->status = TERMINADA;
-  }
-  else if( (contextoAtual == &despachante_ptr) && (despachante_ptr.status == TERMINADA)){
-    free_stack_val();
-    exit(exit_code);    //encerra o programa
   }
 
   //Volta para o despachante
@@ -234,7 +254,10 @@ int task_switch (task_t *task) {
   contextoAnterior = contextoAtual;
   contextoAtual = task;
 
-  printf("Trocando\n");
+  //debug
+  #ifdef DEBUG
+  printf("DEBUG: (task_swith) Trocando\n");
+  #endif
   swapcontext(&(contextoAnterior->context), &(task->context));
 
   return 0;
@@ -248,13 +271,18 @@ void task_yield (){
   printf("DEBUG: (task_yield) id atual = %d\n", contextoAtual->id);
   #endif
 
-  queue_remove(&fila_tasks, (queue_t*)contextoAtual);
+  if(contextoAtual->status == TERMINADA)
+    queue_remove(&fila_tasks, (queue_t*)contextoAtual);
+  else{
+    contextoAtual->status = PRONTA;
+    queue_remove(&fila_tasks, (queue_t*)contextoAtual);
+    queue_append(&fila_tasks, (queue_t*)contextoAtual);    
+  }
 
-  contextoAtual->status = PRONTA;
-  
-  queue_append(&fila_tasks_prontas, (queue_t*)contextoAtual);
-
-  printf("Chamando o yield\n");
+  //debug
+  #ifdef DEBUG
+  printf("DEBUG: (task_yield) Chamando o task_switch\n");
+  #endif
   task_switch(&despachante_ptr);
 }
 
