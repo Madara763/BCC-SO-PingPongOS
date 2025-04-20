@@ -25,7 +25,7 @@ typedef struct task_t
 // Defines =====================================================================
 #define STATUS_MAIN 0
 #define STATUS_INI 0
-#define STACK_TAM 128*1024
+#define STACK_TAM 64*1024
 
 //status das tarefas
 #define PRONTA 0
@@ -80,9 +80,12 @@ int task_cria(task_t *task, task_t *prev, task_t *next, short status, short cria
 //Libera a memoria da task atual
 //Retira o regitro do valgrind
 void free_stack_val(){
-
+  //debug
+  #ifdef DEBUG
+  printf("DEBUG: (free_stack_val) Liberando a pilha\n");
+  #endif 
   // libera a pilha da tarefa
-  free (contextoAtual->context.uc_stack.ss_sp) ;
+  //free(contextoAtual->context.uc_stack.ss_sp) ;
 
   // dezfaz o registro da pilha no Valgrind
   VALGRIND_STACK_DEREGISTER (contextoAtual->vg_id);
@@ -130,11 +133,11 @@ void despachante(void *ptr){
         #ifdef DEBUG
         printf("DEBUG: (despachante) switch: PRONTA\n");
         #endif 
-        queue_remove(&fila_tasks, (queue_t*)contextoAtual);
         if(contextoAtual != &despachante_ptr){
+          queue_remove(&fila_tasks, (queue_t*)contextoAtual);
           queue_append(&fila_tasks, (queue_t*)contextoAtual);
         }
-          break;
+        break;
       case TERMINADA: //Remove a tarefa da fila de prontas e ja era
         //debug
         #ifdef DEBUG

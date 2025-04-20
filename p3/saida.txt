@@ -1,37 +1,767 @@
 main: inicio
+DEBUG: (ppos_init) id main = 0
+DEBUG: (ppos_init) endereco main = 0x5c0560fa6460
+DEBUG: (task_init) id criado = 1
+DEBUG: (queue_append) Verificacoes feitas.
+DEBUG: (queue_append) Fila Vazia.
+DEBUG: (queue_append) Inserido.
+DEBUG: (task_init) id criado = 2
+DEBUG: (queue_append) Verificacoes feitas.
+DEBUG: (queue_append) Insere na Fila.
+DEBUG: (queue_append) Inserido.
+DEBUG: (task_init) id criado = 3
+DEBUG: (queue_append) Verificacoes feitas.
+DEBUG: (queue_append) Insere na Fila.
+DEBUG: (queue_append) Inserido.
+DEBUG: (task_init) id criado = 4
+DEBUG: (queue_append) Verificacoes feitas.
+DEBUG: (queue_append) Insere na Fila.
+DEBUG: (queue_append) Inserido.
+DEBUG: (task_init) id criado = 5
+DEBUG: (queue_append) Verificacoes feitas.
+DEBUG: (queue_append) Insere na Fila.
+DEBUG: (queue_append) Inserido.
+DEBUG: (task_init) id criado = 6
+DEBUG: (queue_append) Verificacoes feitas.
+DEBUG: (queue_append) Insere na Fila.
+DEBUG: (queue_append) Inserido.
 main: fim
+DEBUG: (task_exit) id atual = 0
+DEBUG: (task_exit) id despachante = 1
+DEBUG: (free_stack_val) Liberando a pilha
+DEBUG: (task_yield) id atual = 0
+DEBUG: (queue_remove) Entrou no remove.
+DEBUG: (task_yield) Chamando o task_switch
+DEBUG: (task_swith) id atual = 0
+DEBUG: (task_swith) id novo = 1
+DEBUG: (task_swith) Trocando
+DEBUG: (queue_remove) Entrou no remove.
+DEBUG: (despachante) primeiro na fila_task->id = 2
+DEBUG: (queue_size) ini->id = 2
+DEBUG: (queue_size) aux->id = 3
+DEBUG: (queue_size) aux->id = 4
+DEBUG: (queue_size) aux->id = 5
+DEBUG: (queue_size) aux->id = 6
+DEBUG: (queue_size) ini->id = 2
+DEBUG: (queue_size) aux->id = 3
+DEBUG: (queue_size) aux->id = 4
+DEBUG: (queue_size) aux->id = 5
+DEBUG: (queue_size) aux->id = 6
+DEBUG: (despachante) queue_size(fila_tasks) = 5
+DEBUG: (task_swith) id atual = 1
+DEBUG: (task_swith) id novo = 2
+DEBUG: (task_swith) Trocando
     Pang: inicio
     Pang: 0
+DEBUG: (task_yield) id atual = 2
+DEBUG: (queue_remove) Entrou no remove.
+DEBUG: (queue_append) Verificacoes feitas.
+DEBUG: (queue_append) Insere na Fila.
+DEBUG: (queue_append) Inserido.
+DEBUG: (task_yield) Chamando o task_switch
+DEBUG: (task_swith) id atual = 2
+DEBUG: (task_swith) id novo = 1
+DEBUG: (task_swith) Trocando
+DEBUG: (despachante) switch: PRONTA
+DEBUG: (queue_size) ini->id = 3
+DEBUG: (queue_size) aux->id = 4
+DEBUG: (queue_size) aux->id = 5
+DEBUG: (queue_size) aux->id = 6
+DEBUG: (queue_size) aux->id = 2
+DEBUG: (queue_size) ini->id = 3
+DEBUG: (queue_size) aux->id = 4
+DEBUG: (queue_size) aux->id = 5
+DEBUG: (queue_size) aux->id = 6
+DEBUG: (queue_size) aux->id = 2
+DEBUG: (despachante) queue_size(fila_tasks) = 5
+DEBUG: (task_swith) id atual = 1
+DEBUG: (task_swith) id novo = 3
+DEBUG: (task_swith) Trocando
         Peng: inicio
         Peng: 0
+DEBUG: (task_yield) id atual = 3
+DEBUG: (queue_remove) Entrou no remove.
+DEBUG: (queue_append) Verificacoes feitas.
+DEBUG: (queue_append) Insere na Fila.
+DEBUG: (queue_append) Inserido.
+DEBUG: (task_yield) Chamando o task_switch
+DEBUG: (task_swith) id atual = 3
+DEBUG: (task_swith) id novo = 1
+DEBUG: (task_swith) Trocando
+DEBUG: (despachante) switch: PRONTA
+DEBUG: (queue_size) ini->id = 4
+DEBUG: (queue_size) aux->id = 5
+DEBUG: (queue_size) aux->id = 6
+DEBUG: (queue_size) aux->id = 2
+DEBUG: (queue_size) aux->id = 3
+DEBUG: (queue_size) ini->id = 4
+DEBUG: (queue_size) aux->id = 5
+DEBUG: (queue_size) aux->id = 6
+DEBUG: (queue_size) aux->id = 2
+DEBUG: (queue_size) aux->id = 3
+DEBUG: (despachante) queue_size(fila_tasks) = 5
+DEBUG: (task_swith) id atual = 1
+DEBUG: (task_swith) id novo = 4
+DEBUG: (task_swith) Trocando
             Ping: inicio
             Ping: 0
+DEBUG: (task_yield) id atual = 4
+DEBUG: (queue_remove) Entrou no remove.
+DEBUG: (queue_append) Verificacoes feitas.
+DEBUG: (queue_append) Insere na Fila.
+DEBUG: (queue_append) Inserido.
+DEBUG: (task_yield) Chamando o task_switch
+DEBUG: (task_swith) id atual = 4
+DEBUG: (task_swith) id novo = 1
+DEBUG: (task_swith) Trocando
+DEBUG: (despachante) switch: PRONTA
+DEBUG: (queue_size) ini->id = 5
+DEBUG: (queue_size) aux->id = 6
+DEBUG: (queue_size) aux->id = 2
+DEBUG: (queue_size) aux->id = 3
+DEBUG: (queue_size) aux->id = 4
+DEBUG: (queue_size) ini->id = 5
+DEBUG: (queue_size) aux->id = 6
+DEBUG: (queue_size) aux->id = 2
+DEBUG: (queue_size) aux->id = 3
+DEBUG: (queue_size) aux->id = 4
+DEBUG: (despachante) queue_size(fila_tasks) = 5
+DEBUG: (task_swith) id atual = 1
+DEBUG: (task_swith) id novo = 5
+DEBUG: (task_swith) Trocando
                 Pong: inicio
                 Pong: 0
+DEBUG: (task_yield) id atual = 5
+DEBUG: (queue_remove) Entrou no remove.
+DEBUG: (queue_append) Verificacoes feitas.
+DEBUG: (queue_append) Insere na Fila.
+DEBUG: (queue_append) Inserido.
+DEBUG: (task_yield) Chamando o task_switch
+DEBUG: (task_swith) id atual = 5
+DEBUG: (task_swith) id novo = 1
+DEBUG: (task_swith) Trocando
+DEBUG: (despachante) switch: PRONTA
+DEBUG: (queue_size) ini->id = 6
+DEBUG: (queue_size) aux->id = 2
+DEBUG: (queue_size) aux->id = 3
+DEBUG: (queue_size) aux->id = 4
+DEBUG: (queue_size) aux->id = 5
+DEBUG: (queue_size) ini->id = 6
+DEBUG: (queue_size) aux->id = 2
+DEBUG: (queue_size) aux->id = 3
+DEBUG: (queue_size) aux->id = 4
+DEBUG: (queue_size) aux->id = 5
+DEBUG: (despachante) queue_size(fila_tasks) = 5
+DEBUG: (task_swith) id atual = 1
+DEBUG: (task_swith) id novo = 6
+DEBUG: (task_swith) Trocando
                     Pung: inicio
                     Pung: 0
+DEBUG: (task_yield) id atual = 6
+DEBUG: (queue_remove) Entrou no remove.
+DEBUG: (queue_append) Verificacoes feitas.
+DEBUG: (queue_append) Insere na Fila.
+DEBUG: (queue_append) Inserido.
+DEBUG: (task_yield) Chamando o task_switch
+DEBUG: (task_swith) id atual = 6
+DEBUG: (task_swith) id novo = 1
+DEBUG: (task_swith) Trocando
+DEBUG: (despachante) switch: PRONTA
+DEBUG: (queue_size) ini->id = 2
+DEBUG: (queue_size) aux->id = 3
+DEBUG: (queue_size) aux->id = 4
+DEBUG: (queue_size) aux->id = 5
+DEBUG: (queue_size) aux->id = 6
+DEBUG: (queue_size) ini->id = 2
+DEBUG: (queue_size) aux->id = 3
+DEBUG: (queue_size) aux->id = 4
+DEBUG: (queue_size) aux->id = 5
+DEBUG: (queue_size) aux->id = 6
+DEBUG: (despachante) queue_size(fila_tasks) = 5
+DEBUG: (task_swith) id atual = 1
+DEBUG: (task_swith) id novo = 2
+DEBUG: (task_swith) Trocando
     Pang: 1
+DEBUG: (task_yield) id atual = 2
+DEBUG: (queue_remove) Entrou no remove.
+DEBUG: (queue_append) Verificacoes feitas.
+DEBUG: (queue_append) Insere na Fila.
+DEBUG: (queue_append) Inserido.
+DEBUG: (task_yield) Chamando o task_switch
+DEBUG: (task_swith) id atual = 2
+DEBUG: (task_swith) id novo = 1
+DEBUG: (task_swith) Trocando
+DEBUG: (despachante) switch: PRONTA
+DEBUG: (queue_size) ini->id = 3
+DEBUG: (queue_size) aux->id = 4
+DEBUG: (queue_size) aux->id = 5
+DEBUG: (queue_size) aux->id = 6
+DEBUG: (queue_size) aux->id = 2
+DEBUG: (queue_size) ini->id = 3
+DEBUG: (queue_size) aux->id = 4
+DEBUG: (queue_size) aux->id = 5
+DEBUG: (queue_size) aux->id = 6
+DEBUG: (queue_size) aux->id = 2
+DEBUG: (despachante) queue_size(fila_tasks) = 5
+DEBUG: (task_swith) id atual = 1
+DEBUG: (task_swith) id novo = 3
+DEBUG: (task_swith) Trocando
         Peng: 1
+DEBUG: (task_yield) id atual = 3
+DEBUG: (queue_remove) Entrou no remove.
+DEBUG: (queue_append) Verificacoes feitas.
+DEBUG: (queue_append) Insere na Fila.
+DEBUG: (queue_append) Inserido.
+DEBUG: (task_yield) Chamando o task_switch
+DEBUG: (task_swith) id atual = 3
+DEBUG: (task_swith) id novo = 1
+DEBUG: (task_swith) Trocando
+DEBUG: (despachante) switch: PRONTA
+DEBUG: (queue_size) ini->id = 4
+DEBUG: (queue_size) aux->id = 5
+DEBUG: (queue_size) aux->id = 6
+DEBUG: (queue_size) aux->id = 2
+DEBUG: (queue_size) aux->id = 3
+DEBUG: (queue_size) ini->id = 4
+DEBUG: (queue_size) aux->id = 5
+DEBUG: (queue_size) aux->id = 6
+DEBUG: (queue_size) aux->id = 2
+DEBUG: (queue_size) aux->id = 3
+DEBUG: (despachante) queue_size(fila_tasks) = 5
+DEBUG: (task_swith) id atual = 1
+DEBUG: (task_swith) id novo = 4
+DEBUG: (task_swith) Trocando
             Ping: 1
+DEBUG: (task_yield) id atual = 4
+DEBUG: (queue_remove) Entrou no remove.
+DEBUG: (queue_append) Verificacoes feitas.
+DEBUG: (queue_append) Insere na Fila.
+DEBUG: (queue_append) Inserido.
+DEBUG: (task_yield) Chamando o task_switch
+DEBUG: (task_swith) id atual = 4
+DEBUG: (task_swith) id novo = 1
+DEBUG: (task_swith) Trocando
+DEBUG: (despachante) switch: PRONTA
+DEBUG: (queue_size) ini->id = 5
+DEBUG: (queue_size) aux->id = 6
+DEBUG: (queue_size) aux->id = 2
+DEBUG: (queue_size) aux->id = 3
+DEBUG: (queue_size) aux->id = 4
+DEBUG: (queue_size) ini->id = 5
+DEBUG: (queue_size) aux->id = 6
+DEBUG: (queue_size) aux->id = 2
+DEBUG: (queue_size) aux->id = 3
+DEBUG: (queue_size) aux->id = 4
+DEBUG: (despachante) queue_size(fila_tasks) = 5
+DEBUG: (task_swith) id atual = 1
+DEBUG: (task_swith) id novo = 5
+DEBUG: (task_swith) Trocando
                 Pong: 1
+DEBUG: (task_yield) id atual = 5
+DEBUG: (queue_remove) Entrou no remove.
+DEBUG: (queue_append) Verificacoes feitas.
+DEBUG: (queue_append) Insere na Fila.
+DEBUG: (queue_append) Inserido.
+DEBUG: (task_yield) Chamando o task_switch
+DEBUG: (task_swith) id atual = 5
+DEBUG: (task_swith) id novo = 1
+DEBUG: (task_swith) Trocando
+DEBUG: (despachante) switch: PRONTA
+DEBUG: (queue_size) ini->id = 6
+DEBUG: (queue_size) aux->id = 2
+DEBUG: (queue_size) aux->id = 3
+DEBUG: (queue_size) aux->id = 4
+DEBUG: (queue_size) aux->id = 5
+DEBUG: (queue_size) ini->id = 6
+DEBUG: (queue_size) aux->id = 2
+DEBUG: (queue_size) aux->id = 3
+DEBUG: (queue_size) aux->id = 4
+DEBUG: (queue_size) aux->id = 5
+DEBUG: (despachante) queue_size(fila_tasks) = 5
+DEBUG: (task_swith) id atual = 1
+DEBUG: (task_swith) id novo = 6
+DEBUG: (task_swith) Trocando
                     Pung: 1
+DEBUG: (task_yield) id atual = 6
+DEBUG: (queue_remove) Entrou no remove.
+DEBUG: (queue_append) Verificacoes feitas.
+DEBUG: (queue_append) Insere na Fila.
+DEBUG: (queue_append) Inserido.
+DEBUG: (task_yield) Chamando o task_switch
+DEBUG: (task_swith) id atual = 6
+DEBUG: (task_swith) id novo = 1
+DEBUG: (task_swith) Trocando
+DEBUG: (despachante) switch: PRONTA
+DEBUG: (queue_size) ini->id = 2
+DEBUG: (queue_size) aux->id = 3
+DEBUG: (queue_size) aux->id = 4
+DEBUG: (queue_size) aux->id = 5
+DEBUG: (queue_size) aux->id = 6
+DEBUG: (queue_size) ini->id = 2
+DEBUG: (queue_size) aux->id = 3
+DEBUG: (queue_size) aux->id = 4
+DEBUG: (queue_size) aux->id = 5
+DEBUG: (queue_size) aux->id = 6
+DEBUG: (despachante) queue_size(fila_tasks) = 5
+DEBUG: (task_swith) id atual = 1
+DEBUG: (task_swith) id novo = 2
+DEBUG: (task_swith) Trocando
     Pang: 2
+DEBUG: (task_yield) id atual = 2
+DEBUG: (queue_remove) Entrou no remove.
+DEBUG: (queue_append) Verificacoes feitas.
+DEBUG: (queue_append) Insere na Fila.
+DEBUG: (queue_append) Inserido.
+DEBUG: (task_yield) Chamando o task_switch
+DEBUG: (task_swith) id atual = 2
+DEBUG: (task_swith) id novo = 1
+DEBUG: (task_swith) Trocando
+DEBUG: (despachante) switch: PRONTA
+DEBUG: (queue_size) ini->id = 3
+DEBUG: (queue_size) aux->id = 4
+DEBUG: (queue_size) aux->id = 5
+DEBUG: (queue_size) aux->id = 6
+DEBUG: (queue_size) aux->id = 2
+DEBUG: (queue_size) ini->id = 3
+DEBUG: (queue_size) aux->id = 4
+DEBUG: (queue_size) aux->id = 5
+DEBUG: (queue_size) aux->id = 6
+DEBUG: (queue_size) aux->id = 2
+DEBUG: (despachante) queue_size(fila_tasks) = 5
+DEBUG: (task_swith) id atual = 1
+DEBUG: (task_swith) id novo = 3
+DEBUG: (task_swith) Trocando
         Peng: 2
+DEBUG: (task_yield) id atual = 3
+DEBUG: (queue_remove) Entrou no remove.
+DEBUG: (queue_append) Verificacoes feitas.
+DEBUG: (queue_append) Insere na Fila.
+DEBUG: (queue_append) Inserido.
+DEBUG: (task_yield) Chamando o task_switch
+DEBUG: (task_swith) id atual = 3
+DEBUG: (task_swith) id novo = 1
+DEBUG: (task_swith) Trocando
+DEBUG: (despachante) switch: PRONTA
+DEBUG: (queue_size) ini->id = 4
+DEBUG: (queue_size) aux->id = 5
+DEBUG: (queue_size) aux->id = 6
+DEBUG: (queue_size) aux->id = 2
+DEBUG: (queue_size) aux->id = 3
+DEBUG: (queue_size) ini->id = 4
+DEBUG: (queue_size) aux->id = 5
+DEBUG: (queue_size) aux->id = 6
+DEBUG: (queue_size) aux->id = 2
+DEBUG: (queue_size) aux->id = 3
+DEBUG: (despachante) queue_size(fila_tasks) = 5
+DEBUG: (task_swith) id atual = 1
+DEBUG: (task_swith) id novo = 4
+DEBUG: (task_swith) Trocando
             Ping: 2
+DEBUG: (task_yield) id atual = 4
+DEBUG: (queue_remove) Entrou no remove.
+DEBUG: (queue_append) Verificacoes feitas.
+DEBUG: (queue_append) Insere na Fila.
+DEBUG: (queue_append) Inserido.
+DEBUG: (task_yield) Chamando o task_switch
+DEBUG: (task_swith) id atual = 4
+DEBUG: (task_swith) id novo = 1
+DEBUG: (task_swith) Trocando
+DEBUG: (despachante) switch: PRONTA
+DEBUG: (queue_size) ini->id = 5
+DEBUG: (queue_size) aux->id = 6
+DEBUG: (queue_size) aux->id = 2
+DEBUG: (queue_size) aux->id = 3
+DEBUG: (queue_size) aux->id = 4
+DEBUG: (queue_size) ini->id = 5
+DEBUG: (queue_size) aux->id = 6
+DEBUG: (queue_size) aux->id = 2
+DEBUG: (queue_size) aux->id = 3
+DEBUG: (queue_size) aux->id = 4
+DEBUG: (despachante) queue_size(fila_tasks) = 5
+DEBUG: (task_swith) id atual = 1
+DEBUG: (task_swith) id novo = 5
+DEBUG: (task_swith) Trocando
                 Pong: 2
+DEBUG: (task_yield) id atual = 5
+DEBUG: (queue_remove) Entrou no remove.
+DEBUG: (queue_append) Verificacoes feitas.
+DEBUG: (queue_append) Insere na Fila.
+DEBUG: (queue_append) Inserido.
+DEBUG: (task_yield) Chamando o task_switch
+DEBUG: (task_swith) id atual = 5
+DEBUG: (task_swith) id novo = 1
+DEBUG: (task_swith) Trocando
+DEBUG: (despachante) switch: PRONTA
+DEBUG: (queue_size) ini->id = 6
+DEBUG: (queue_size) aux->id = 2
+DEBUG: (queue_size) aux->id = 3
+DEBUG: (queue_size) aux->id = 4
+DEBUG: (queue_size) aux->id = 5
+DEBUG: (queue_size) ini->id = 6
+DEBUG: (queue_size) aux->id = 2
+DEBUG: (queue_size) aux->id = 3
+DEBUG: (queue_size) aux->id = 4
+DEBUG: (queue_size) aux->id = 5
+DEBUG: (despachante) queue_size(fila_tasks) = 5
+DEBUG: (task_swith) id atual = 1
+DEBUG: (task_swith) id novo = 6
+DEBUG: (task_swith) Trocando
                     Pung: 2
+DEBUG: (task_yield) id atual = 6
+DEBUG: (queue_remove) Entrou no remove.
+DEBUG: (queue_append) Verificacoes feitas.
+DEBUG: (queue_append) Insere na Fila.
+DEBUG: (queue_append) Inserido.
+DEBUG: (task_yield) Chamando o task_switch
+DEBUG: (task_swith) id atual = 6
+DEBUG: (task_swith) id novo = 1
+DEBUG: (task_swith) Trocando
+DEBUG: (despachante) switch: PRONTA
+DEBUG: (queue_size) ini->id = 2
+DEBUG: (queue_size) aux->id = 3
+DEBUG: (queue_size) aux->id = 4
+DEBUG: (queue_size) aux->id = 5
+DEBUG: (queue_size) aux->id = 6
+DEBUG: (queue_size) ini->id = 2
+DEBUG: (queue_size) aux->id = 3
+DEBUG: (queue_size) aux->id = 4
+DEBUG: (queue_size) aux->id = 5
+DEBUG: (queue_size) aux->id = 6
+DEBUG: (despachante) queue_size(fila_tasks) = 5
+DEBUG: (task_swith) id atual = 1
+DEBUG: (task_swith) id novo = 2
+DEBUG: (task_swith) Trocando
     Pang: 3
+DEBUG: (task_yield) id atual = 2
+DEBUG: (queue_remove) Entrou no remove.
+DEBUG: (queue_append) Verificacoes feitas.
+DEBUG: (queue_append) Insere na Fila.
+DEBUG: (queue_append) Inserido.
+DEBUG: (task_yield) Chamando o task_switch
+DEBUG: (task_swith) id atual = 2
+DEBUG: (task_swith) id novo = 1
+DEBUG: (task_swith) Trocando
+DEBUG: (despachante) switch: PRONTA
+DEBUG: (queue_size) ini->id = 3
+DEBUG: (queue_size) aux->id = 4
+DEBUG: (queue_size) aux->id = 5
+DEBUG: (queue_size) aux->id = 6
+DEBUG: (queue_size) aux->id = 2
+DEBUG: (queue_size) ini->id = 3
+DEBUG: (queue_size) aux->id = 4
+DEBUG: (queue_size) aux->id = 5
+DEBUG: (queue_size) aux->id = 6
+DEBUG: (queue_size) aux->id = 2
+DEBUG: (despachante) queue_size(fila_tasks) = 5
+DEBUG: (task_swith) id atual = 1
+DEBUG: (task_swith) id novo = 3
+DEBUG: (task_swith) Trocando
         Peng: 3
+DEBUG: (task_yield) id atual = 3
+DEBUG: (queue_remove) Entrou no remove.
+DEBUG: (queue_append) Verificacoes feitas.
+DEBUG: (queue_append) Insere na Fila.
+DEBUG: (queue_append) Inserido.
+DEBUG: (task_yield) Chamando o task_switch
+DEBUG: (task_swith) id atual = 3
+DEBUG: (task_swith) id novo = 1
+DEBUG: (task_swith) Trocando
+DEBUG: (despachante) switch: PRONTA
+DEBUG: (queue_size) ini->id = 4
+DEBUG: (queue_size) aux->id = 5
+DEBUG: (queue_size) aux->id = 6
+DEBUG: (queue_size) aux->id = 2
+DEBUG: (queue_size) aux->id = 3
+DEBUG: (queue_size) ini->id = 4
+DEBUG: (queue_size) aux->id = 5
+DEBUG: (queue_size) aux->id = 6
+DEBUG: (queue_size) aux->id = 2
+DEBUG: (queue_size) aux->id = 3
+DEBUG: (despachante) queue_size(fila_tasks) = 5
+DEBUG: (task_swith) id atual = 1
+DEBUG: (task_swith) id novo = 4
+DEBUG: (task_swith) Trocando
             Ping: 3
+DEBUG: (task_yield) id atual = 4
+DEBUG: (queue_remove) Entrou no remove.
+DEBUG: (queue_append) Verificacoes feitas.
+DEBUG: (queue_append) Insere na Fila.
+DEBUG: (queue_append) Inserido.
+DEBUG: (task_yield) Chamando o task_switch
+DEBUG: (task_swith) id atual = 4
+DEBUG: (task_swith) id novo = 1
+DEBUG: (task_swith) Trocando
+DEBUG: (despachante) switch: PRONTA
+DEBUG: (queue_size) ini->id = 5
+DEBUG: (queue_size) aux->id = 6
+DEBUG: (queue_size) aux->id = 2
+DEBUG: (queue_size) aux->id = 3
+DEBUG: (queue_size) aux->id = 4
+DEBUG: (queue_size) ini->id = 5
+DEBUG: (queue_size) aux->id = 6
+DEBUG: (queue_size) aux->id = 2
+DEBUG: (queue_size) aux->id = 3
+DEBUG: (queue_size) aux->id = 4
+DEBUG: (despachante) queue_size(fila_tasks) = 5
+DEBUG: (task_swith) id atual = 1
+DEBUG: (task_swith) id novo = 5
+DEBUG: (task_swith) Trocando
                 Pong: 3
+DEBUG: (task_yield) id atual = 5
+DEBUG: (queue_remove) Entrou no remove.
+DEBUG: (queue_append) Verificacoes feitas.
+DEBUG: (queue_append) Insere na Fila.
+DEBUG: (queue_append) Inserido.
+DEBUG: (task_yield) Chamando o task_switch
+DEBUG: (task_swith) id atual = 5
+DEBUG: (task_swith) id novo = 1
+DEBUG: (task_swith) Trocando
+DEBUG: (despachante) switch: PRONTA
+DEBUG: (queue_size) ini->id = 6
+DEBUG: (queue_size) aux->id = 2
+DEBUG: (queue_size) aux->id = 3
+DEBUG: (queue_size) aux->id = 4
+DEBUG: (queue_size) aux->id = 5
+DEBUG: (queue_size) ini->id = 6
+DEBUG: (queue_size) aux->id = 2
+DEBUG: (queue_size) aux->id = 3
+DEBUG: (queue_size) aux->id = 4
+DEBUG: (queue_size) aux->id = 5
+DEBUG: (despachante) queue_size(fila_tasks) = 5
+DEBUG: (task_swith) id atual = 1
+DEBUG: (task_swith) id novo = 6
+DEBUG: (task_swith) Trocando
                     Pung: 3
+DEBUG: (task_yield) id atual = 6
+DEBUG: (queue_remove) Entrou no remove.
+DEBUG: (queue_append) Verificacoes feitas.
+DEBUG: (queue_append) Insere na Fila.
+DEBUG: (queue_append) Inserido.
+DEBUG: (task_yield) Chamando o task_switch
+DEBUG: (task_swith) id atual = 6
+DEBUG: (task_swith) id novo = 1
+DEBUG: (task_swith) Trocando
+DEBUG: (despachante) switch: PRONTA
+DEBUG: (queue_size) ini->id = 2
+DEBUG: (queue_size) aux->id = 3
+DEBUG: (queue_size) aux->id = 4
+DEBUG: (queue_size) aux->id = 5
+DEBUG: (queue_size) aux->id = 6
+DEBUG: (queue_size) ini->id = 2
+DEBUG: (queue_size) aux->id = 3
+DEBUG: (queue_size) aux->id = 4
+DEBUG: (queue_size) aux->id = 5
+DEBUG: (queue_size) aux->id = 6
+DEBUG: (despachante) queue_size(fila_tasks) = 5
+DEBUG: (task_swith) id atual = 1
+DEBUG: (task_swith) id novo = 2
+DEBUG: (task_swith) Trocando
     Pang: 4
+DEBUG: (task_yield) id atual = 2
+DEBUG: (queue_remove) Entrou no remove.
+DEBUG: (queue_append) Verificacoes feitas.
+DEBUG: (queue_append) Insere na Fila.
+DEBUG: (queue_append) Inserido.
+DEBUG: (task_yield) Chamando o task_switch
+DEBUG: (task_swith) id atual = 2
+DEBUG: (task_swith) id novo = 1
+DEBUG: (task_swith) Trocando
+DEBUG: (despachante) switch: PRONTA
+DEBUG: (queue_size) ini->id = 3
+DEBUG: (queue_size) aux->id = 4
+DEBUG: (queue_size) aux->id = 5
+DEBUG: (queue_size) aux->id = 6
+DEBUG: (queue_size) aux->id = 2
+DEBUG: (queue_size) ini->id = 3
+DEBUG: (queue_size) aux->id = 4
+DEBUG: (queue_size) aux->id = 5
+DEBUG: (queue_size) aux->id = 6
+DEBUG: (queue_size) aux->id = 2
+DEBUG: (despachante) queue_size(fila_tasks) = 5
+DEBUG: (task_swith) id atual = 1
+DEBUG: (task_swith) id novo = 3
+DEBUG: (task_swith) Trocando
         Peng: 4
+DEBUG: (task_yield) id atual = 3
+DEBUG: (queue_remove) Entrou no remove.
+DEBUG: (queue_append) Verificacoes feitas.
+DEBUG: (queue_append) Insere na Fila.
+DEBUG: (queue_append) Inserido.
+DEBUG: (task_yield) Chamando o task_switch
+DEBUG: (task_swith) id atual = 3
+DEBUG: (task_swith) id novo = 1
+DEBUG: (task_swith) Trocando
+DEBUG: (despachante) switch: PRONTA
+DEBUG: (queue_size) ini->id = 4
+DEBUG: (queue_size) aux->id = 5
+DEBUG: (queue_size) aux->id = 6
+DEBUG: (queue_size) aux->id = 2
+DEBUG: (queue_size) aux->id = 3
+DEBUG: (queue_size) ini->id = 4
+DEBUG: (queue_size) aux->id = 5
+DEBUG: (queue_size) aux->id = 6
+DEBUG: (queue_size) aux->id = 2
+DEBUG: (queue_size) aux->id = 3
+DEBUG: (despachante) queue_size(fila_tasks) = 5
+DEBUG: (task_swith) id atual = 1
+DEBUG: (task_swith) id novo = 4
+DEBUG: (task_swith) Trocando
             Ping: 4
+DEBUG: (task_yield) id atual = 4
+DEBUG: (queue_remove) Entrou no remove.
+DEBUG: (queue_append) Verificacoes feitas.
+DEBUG: (queue_append) Insere na Fila.
+DEBUG: (queue_append) Inserido.
+DEBUG: (task_yield) Chamando o task_switch
+DEBUG: (task_swith) id atual = 4
+DEBUG: (task_swith) id novo = 1
+DEBUG: (task_swith) Trocando
+DEBUG: (despachante) switch: PRONTA
+DEBUG: (queue_size) ini->id = 5
+DEBUG: (queue_size) aux->id = 6
+DEBUG: (queue_size) aux->id = 2
+DEBUG: (queue_size) aux->id = 3
+DEBUG: (queue_size) aux->id = 4
+DEBUG: (queue_size) ini->id = 5
+DEBUG: (queue_size) aux->id = 6
+DEBUG: (queue_size) aux->id = 2
+DEBUG: (queue_size) aux->id = 3
+DEBUG: (queue_size) aux->id = 4
+DEBUG: (despachante) queue_size(fila_tasks) = 5
+DEBUG: (task_swith) id atual = 1
+DEBUG: (task_swith) id novo = 5
+DEBUG: (task_swith) Trocando
                 Pong: 4
+DEBUG: (task_yield) id atual = 5
+DEBUG: (queue_remove) Entrou no remove.
+DEBUG: (queue_append) Verificacoes feitas.
+DEBUG: (queue_append) Insere na Fila.
+DEBUG: (queue_append) Inserido.
+DEBUG: (task_yield) Chamando o task_switch
+DEBUG: (task_swith) id atual = 5
+DEBUG: (task_swith) id novo = 1
+DEBUG: (task_swith) Trocando
+DEBUG: (despachante) switch: PRONTA
+DEBUG: (queue_size) ini->id = 6
+DEBUG: (queue_size) aux->id = 2
+DEBUG: (queue_size) aux->id = 3
+DEBUG: (queue_size) aux->id = 4
+DEBUG: (queue_size) aux->id = 5
+DEBUG: (queue_size) ini->id = 6
+DEBUG: (queue_size) aux->id = 2
+DEBUG: (queue_size) aux->id = 3
+DEBUG: (queue_size) aux->id = 4
+DEBUG: (queue_size) aux->id = 5
+DEBUG: (despachante) queue_size(fila_tasks) = 5
+DEBUG: (task_swith) id atual = 1
+DEBUG: (task_swith) id novo = 6
+DEBUG: (task_swith) Trocando
                     Pung: 4
+DEBUG: (task_yield) id atual = 6
+DEBUG: (queue_remove) Entrou no remove.
+DEBUG: (queue_append) Verificacoes feitas.
+DEBUG: (queue_append) Insere na Fila.
+DEBUG: (queue_append) Inserido.
+DEBUG: (task_yield) Chamando o task_switch
+DEBUG: (task_swith) id atual = 6
+DEBUG: (task_swith) id novo = 1
+DEBUG: (task_swith) Trocando
+DEBUG: (despachante) switch: PRONTA
+DEBUG: (queue_size) ini->id = 2
+DEBUG: (queue_size) aux->id = 3
+DEBUG: (queue_size) aux->id = 4
+DEBUG: (queue_size) aux->id = 5
+DEBUG: (queue_size) aux->id = 6
+DEBUG: (queue_size) ini->id = 2
+DEBUG: (queue_size) aux->id = 3
+DEBUG: (queue_size) aux->id = 4
+DEBUG: (queue_size) aux->id = 5
+DEBUG: (queue_size) aux->id = 6
+DEBUG: (despachante) queue_size(fila_tasks) = 5
+DEBUG: (task_swith) id atual = 1
+DEBUG: (task_swith) id novo = 2
+DEBUG: (task_swith) Trocando
     Pang: fim
+DEBUG: (task_exit) id atual = 2
+DEBUG: (task_exit) id despachante = 1
+DEBUG: (free_stack_val) Liberando a pilha
+DEBUG: (task_yield) id atual = 2
+DEBUG: (queue_remove) Entrou no remove.
+DEBUG: (task_yield) Chamando o task_switch
+DEBUG: (task_swith) id atual = 2
+DEBUG: (task_swith) id novo = 1
+DEBUG: (task_swith) Trocando
+DEBUG: (despachante) switch: PRONTA
+DEBUG: (queue_size) ini->id = 3
+DEBUG: (queue_size) aux->id = 4
+DEBUG: (queue_size) aux->id = 5
+DEBUG: (queue_size) aux->id = 6
+DEBUG: (queue_size) ini->id = 3
+DEBUG: (queue_size) aux->id = 4
+DEBUG: (queue_size) aux->id = 5
+DEBUG: (queue_size) aux->id = 6
+DEBUG: (despachante) queue_size(fila_tasks) = 4
+DEBUG: (task_swith) id atual = 1
+DEBUG: (task_swith) id novo = 3
+DEBUG: (task_swith) Trocando
         Peng: fim
+DEBUG: (task_exit) id atual = 3
+DEBUG: (task_exit) id despachante = 1
+DEBUG: (free_stack_val) Liberando a pilha
+DEBUG: (task_yield) id atual = 3
+DEBUG: (queue_remove) Entrou no remove.
+DEBUG: (task_yield) Chamando o task_switch
+DEBUG: (task_swith) id atual = 3
+DEBUG: (task_swith) id novo = 1
+DEBUG: (task_swith) Trocando
+DEBUG: (despachante) switch: PRONTA
+DEBUG: (queue_size) ini->id = 4
+DEBUG: (queue_size) aux->id = 5
+DEBUG: (queue_size) aux->id = 6
+DEBUG: (queue_size) ini->id = 4
+DEBUG: (queue_size) aux->id = 5
+DEBUG: (queue_size) aux->id = 6
+DEBUG: (despachante) queue_size(fila_tasks) = 3
+DEBUG: (task_swith) id atual = 1
+DEBUG: (task_swith) id novo = 4
+DEBUG: (task_swith) Trocando
             Ping: fim
+DEBUG: (task_exit) id atual = 4
+DEBUG: (task_exit) id despachante = 1
+DEBUG: (free_stack_val) Liberando a pilha
+DEBUG: (task_yield) id atual = 4
+DEBUG: (queue_remove) Entrou no remove.
+DEBUG: (task_yield) Chamando o task_switch
+DEBUG: (task_swith) id atual = 4
+DEBUG: (task_swith) id novo = 1
+DEBUG: (task_swith) Trocando
+DEBUG: (despachante) switch: PRONTA
+DEBUG: (queue_size) ini->id = 5
+DEBUG: (queue_size) aux->id = 6
+DEBUG: (queue_size) ini->id = 5
+DEBUG: (queue_size) aux->id = 6
+DEBUG: (despachante) queue_size(fila_tasks) = 2
+DEBUG: (task_swith) id atual = 1
+DEBUG: (task_swith) id novo = 5
+DEBUG: (task_swith) Trocando
                 Pong: fim
+DEBUG: (task_exit) id atual = 5
+DEBUG: (task_exit) id despachante = 1
+DEBUG: (free_stack_val) Liberando a pilha
+DEBUG: (task_yield) id atual = 5
+DEBUG: (queue_remove) Entrou no remove.
+DEBUG: (task_yield) Chamando o task_switch
+DEBUG: (task_swith) id atual = 5
+DEBUG: (task_swith) id novo = 1
+DEBUG: (task_swith) Trocando
+DEBUG: (despachante) switch: PRONTA
+DEBUG: (queue_size) ini->id = 6
+DEBUG: (queue_size) ini->id = 6
+DEBUG: (despachante) queue_size(fila_tasks) = 1
+DEBUG: (task_swith) id atual = 1
+DEBUG: (task_swith) id novo = 6
+DEBUG: (task_swith) Trocando
                     Pung: fim
+DEBUG: (task_exit) id atual = 6
+DEBUG: (task_exit) id despachante = 1
+DEBUG: (free_stack_val) Liberando a pilha
