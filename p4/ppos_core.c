@@ -16,6 +16,8 @@ typedef struct task_t
   ucontext_t context ;			      // contexto armazenado da tarefa
   short status ;			            // pronta, rodando, suspensa, ...
   int vg_id ;		                  // ID da pilha da tarefa no Valgrind
+  int prioridade;                 // Prioridade estatica da tarefa 
+  int nice;                       //Valor do Nice(que deve estar entre -20 e +20)
   // ... (outros campos serão adicionados mais tarde)
 } task_t ;
 */
@@ -32,6 +34,9 @@ typedef struct task_t
 #define TERMINADA 1
 #define SUSPENSA 2
 
+//Delta de prioridade (esse valor eh subtraido)
+#define DELTA_PRIORIDADE 1
+
 // Variaveis Globais============================================================
 
 task_t contextoMain, *contextoAnterior = NULL, *contextoAtual = NULL, despachante_ptr;
@@ -40,6 +45,25 @@ queue_t *fila_tasks = NULL;              //Cria a fila de tarefas
 queue_t *fila_tasks_terminadas = NULL;   //Cria a fila de tarefas finalizadas para liberar memoria
 
 // Funções Internas=============================================================
+
+// define a prioridade dinamica de uma tarefa (ou a tarefa atual)
+void task_setnice (task_t *task, int nice){
+  if(nice <= 20 && nice >= -20){
+    if(task){
+      task->nice = nice;
+    }
+    else
+      contextoAtual->nice = nice;
+  }
+}
+
+// retorna a prioridade dinamica de uma tarefa (ou a tarefa atual)
+int task_getnice (task_t *task) {
+  if(task)
+    return task->nice;
+
+  return contextoAtual->nice;
+}
 
 // Inicializa uma task, recebe ponteiros *prev, *next, e status
 // Retorna o id da tarefa, retorna um valor negativo em caso de erro
@@ -53,6 +77,8 @@ int task_cria(task_t *task, task_t *prev, task_t *next, short status, short cria
   task->prev = prev;
   task->id = ID_Global;
   task->status = status;
+  task->prioridade = 0;
+  task->nice = 0;
 
   getcontext(&(task->context)); 
 
@@ -91,12 +117,53 @@ void free_stack_val(task_t* task){
   VALGRIND_STACK_DEREGISTER (task->vg_id);
 }
 
-//Atualiza o ponteiro de proxima tarefa, coloca a atual no final da fila
-//Retorna um ponteiro para a tarefa a ser executada no momento
-task_t* scheduler(){
-  return (task_t*)fila_tasks;
+//Atualiza a prioridade com um valor delta
+void task_atualiza_nice(task_t *task){
+  //debug
+  //#ifdef DEBUG
+  //printf("Atualizando prioridade:\n");
+  //printf("            prioridade atual: %d\n", task_getprio(task));
+  //printf("            prioridade nova: %d\n", task_getprio(task) - DELTA_PRIORIDADE);
+  //#endif
+  //printf("Atualizando prioridade:\n");
+  //Percorre toda a fila 
+  int tamfila = queue_size(fila_tasks);
+
+  task_t *aux = (task_t*)fila_tasks;
+  
+  for(int i = 0; i < tamfila; i++){
+    
+    if( aux != task){ aux->nice -= DELTA_PRIORIDADE; }
+
+    aux = aux->next;
+  }
 }
 
+//Atualiza o ponteiro de proxima tarefa, coloca a atual no final da fila
+//Retorna um ponteiro para a tarefa a ser executada no momento
+//Se prioridade dinamica (nice) != 0 compara ela, prioriza a menor entre as dinamicas e estaticas
+//Ao retornar a tarefa, ja  reseta a prioridade dinamica
+task_t* scheduler(){
+  //Aux aponta para o inicio da fila
+  //Proxima aponta para a task com menor prioridade
+  task_t *proxima = (task_t*)fila_tasks;
+  task_t *aux = (task_t*)fila_tasks;
+
+  //Percorre toda a fila buscando a menor prioridade
+  int tamfila = queue_size(fila_tasks);
+
+  for(int i = 0; i < tamfila; i++){
+    if(task_getnice(aux)  <= task_getnice(proxima)) //se nice for menor ou igual
+      proxima = aux;    
+
+    aux = aux->next;
+  }
+  
+  //printf("tarefa escolhida -> nice: %d  prio: %d\n", proxima->nice, proxima->prioridade);
+  task_atualiza_nice(proxima);
+  task_setnice(proxima, task_getprio(proxima));
+  return (task_t*)proxima;
+}
 
 //Funcao e chamada sempre que uma tarefa eh encerrada
 //Coloca a proxima tarefa em execucao
@@ -127,20 +194,24 @@ void despachante(void *ptr){
     if(proxima){
       task_switch(proxima);
       
-      switch (contextoAtual->status)
+      switch (contextoAnterior->status)
       {
       case PRONTA:  //Remove da fila de prontas e coloca para exec dnv
         //debug
         #ifdef DEBUG
         printf("DEBUG: (despachante) switch: PRONTA\n");
         #endif 
+        
+        
         break;
       case TERMINADA: //Remove a tarefa da fila de prontas e ja era
         //debug
         #ifdef DEBUG
         printf("DEBUG: (despachante) switch: TERMINADA\n");
         #endif 
-        queue_remove(&fila_tasks, (queue_t*)contextoAtual);
+        if(contextoAtual != &despachante_ptr)
+          queue_remove(&fila_tasks, (queue_t*)contextoAnterior);
+        
         break;
       case SUSPENSA:
         break;
@@ -273,6 +344,8 @@ int task_switch (task_t *task) {
   return 0;
 }
 
+// operações de escalonamento ==================================================
+
 // a tarefa atual libera o processador para outra tarefa
 void task_yield (){
   
@@ -296,5 +369,27 @@ void task_yield (){
   printf("DEBUG: (task_yield) Chamando o task_switch\n");
   #endif
   task_switch(&despachante_ptr);
+}
+
+// define a prioridade estática e a dimanica de uma tarefa (ou a tarefa atual)
+void task_setprio (task_t *task, int prio){
+  if(prio <= 20 && prio >= -20){
+    if(task){
+      task->prioridade = prio;
+      task->nice = prio;
+    }
+    else{
+      contextoAtual->prioridade = prio;
+      contextoAtual->nice = prio;
+    }
+  }
+}
+
+// retorna a prioridade estática de uma tarefa (ou a tarefa atual)
+int task_getprio (task_t *task) {
+  if(task)
+    return task->prioridade;
+
+  return contextoAtual->prioridade;
 }
 
