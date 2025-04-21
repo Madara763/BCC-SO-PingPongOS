@@ -4,13 +4,12 @@ CFLAGS = -Wall -g -std=c99 $(DEBUG_FLAGS) # gerar "warnings" detalhados e infos 
 obj = $(prog).o ppos.o queue.o
 prog = testep4
 
+# regra default (primeira regra)
+all:	$(prog)
+
 # Se DEBUG=1, define a flag -DDEBUG para o compilador
 debug:	CFLAGS += -DDEBUG
 debug:	all
-
-
-# regra default (primeira regra)
-all:	$(prog)
 
 # regras de ligacao
 $(prog):	$(obj)
@@ -22,7 +21,6 @@ ppos.o:	ppos_core.c
 
 queue.o: queue.c
 	$(CC) $(CFLAGS) -c -o queue.o queue.c
-
 
 # remove arquivos temporários
 clean:
