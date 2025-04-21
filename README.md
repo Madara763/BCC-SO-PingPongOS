@@ -28,6 +28,18 @@ ppos_core.c
 Consiste em implementar funcoes e estruturas para gerenciar trocas de contexto e status das terefas.
 Arquivos
 ```
+queue.h
+queue.c
+ppos_data.h
+ppos.h
+ppos_core.c
+```
+### [Escalonamento por prioridades](https://wiki.inf.ufpr.br/maziero/doku.php?id=so:escalonador_por_prioridades)
+Consiste em implentar o escalonamnto de prioridades das tarefas
+Arquivos
+```
+queue.h
+queue.c
 ppos_data.h
 ppos.h
 ppos_core.c
