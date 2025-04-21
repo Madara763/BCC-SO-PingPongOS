@@ -18,7 +18,7 @@ Respostas em ```respostas_pq.md```.
 
 ### [Gestão de Tarefas](https://wiki.inf.ufpr.br/maziero/doku.php?id=so:gestao_de_tarefas) (p2)
 Construir as funções básicas de gestão de tarefas usando as funções de troca de contexto vistas no projeto anterior. 
-Arquivos
+#### Arquivos:
 ```
 ppos_data.h
 ppos.h
@@ -26,7 +26,7 @@ ppos_core.c
 ```
 ### [Despachante de tarefas](https://wiki.inf.ufpr.br/maziero/doku.php?id=so:dispatcher) (p3)
 Consiste em implementar funcoes e estruturas para gerenciar trocas de contexto e status das terefas.
-Arquivos
+#### Arquivos:
 ```
 queue.h
 queue.c
@@ -35,8 +35,8 @@ ppos.h
 ppos_core.c
 ```
 ### [Escalonamento por prioridades](https://wiki.inf.ufpr.br/maziero/doku.php?id=so:escalonador_por_prioridades)
-Consiste em implentar o escalonamnto de prioridades das tarefas
-Arquivos
+Consiste em implentar o escalonamnto de prioridades das tarefas.
+#### Arquivos:
 ```
 queue.h
 queue.c
