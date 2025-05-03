@@ -2,8 +2,7 @@ CC = gcc
 CFLAGS = -Wall -g -std=c99 $(DEBUG_FLAGS) # gerar "warnings" detalhados e infos de depuração
  
 obj = $(prog).o ppos.o queue.o
-prog = testep4
-
+prog = testep5
 # regra default (primeira regra)
 all:	$(prog)
 

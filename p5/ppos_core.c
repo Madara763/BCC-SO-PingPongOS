@@ -2,6 +2,8 @@
 // Davi Garcia Lazzarin
 // 19/04/25
 
+#define _POSIX_C_SOURCE 200809L // Necessario para compilar com struct sigaction action;   
+
 #include "ppos.h"
 
 
@@ -30,6 +32,7 @@ typedef struct task_t
 #define STATUS_MAIN 0
 #define STATUS_INI 0
 #define STACK_TAM 64*1024
+#define QUANTUM_MAX 20
 
 //status das tarefas
 #define PRONTA 0
@@ -46,10 +49,11 @@ typedef struct task_t
 // Variaveis Globais============================================================
 
 task_t contextoMain, *contextoAnterior = NULL, *contextoAtual = NULL, despachante_ptr;
-int ID_Global=0;              //Contem o valor do prox id de task que sera criado
+int ID_Global=0;                         //Contem o valor do prox id de task que sera criado
 queue_t *fila_tasks = NULL;              //Cria a fila de tarefas
 queue_t *fila_tasks_terminadas = NULL;   //Cria a fila de tarefas finalizadas para liberar memoria
 
+int quantum;
 struct sigaction action;                 //Definida para usar um tratador de sinal
 struct itimerval timer;                  //Usada para lancar os sinais
 
@@ -151,7 +155,15 @@ void task_atualiza_nice(task_t *task){
 
 //Trata os sinais recebidos
 void tratador(int signum){
-  
+  if(contextoAtual != &despachante_ptr && contextoAtual != &contextoMain){
+    //printf("trata fora do dpc quantum= %d", quantum);
+    if(quantum > 1)
+      quantum --;
+    else
+      task_yield();
+  }
+  //else N faz nada pq o despachante esta rodando
+
 }
 
 //Atualiza o ponteiro de proxima tarefa, coloca a atual no final da fila
@@ -168,7 +180,7 @@ task_t* scheduler(){
   int tamfila = queue_size(fila_tasks);
 
   for(int i = 0; i < tamfila; i++){
-    if(task_getnice(aux)  <= task_getnice(proxima)) //se nice for menor ou igual
+    if(task_getnice(aux)  < task_getnice(proxima)) //se nice for menor ou igual
       proxima = aux;    
 
     aux = aux->next;
@@ -207,6 +219,7 @@ void despachante(void *ptr){
     proxima = scheduler();
     
     if(proxima){
+      quantum=QUANTUM_MAX;
       task_switch(proxima);
       
       switch (contextoAnterior->status)
@@ -296,11 +309,16 @@ void ppos_init (){
   }
 
   //Inicia o sistema do temporizador
-  timer.it_value.tv_usec = 0;     //atraso inicial em microsegundos
-  timer.it_value.tv_sec = 3;      //atraso inicial em segundos
+  timer.it_value.tv_usec = 10;        //atraso inicial em microsegundos
+  timer.it_value.tv_sec = 0;         //atraso inicial em segundos
   timer.it_interval.tv_usec = 1000;  //tempo do intervalo em microsegundos
-  timer.it_interval.tv_sec = 0;   //tempo do intervalo em segundos 
+  timer.it_interval.tv_sec = 0;      //tempo do intervalo em segundos 
 
+  //Arma o temporizador
+  if(setitimer(ITIMER_REAL, &timer, 0) < 0){
+    perror("Erro em settimer: ");
+    exit(1);
+  }
 }
 
 // gerencia de tarefas =========================================================
