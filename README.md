@@ -55,7 +55,7 @@ ppos.h
 ppos_core.c
 ```
 ### [Contabilização de tarefas](https://wiki.inf.ufpr.br/maziero/doku.php?id=so:contabilizacao) (p6)
-Agora vamos contabilizar o tempo de CPU qye cada tarefa usou.
+Agora vamos contabilizar o tempo de CPU que cada tarefa usou.
 #### Arquivos:
 ```
 queue.h
