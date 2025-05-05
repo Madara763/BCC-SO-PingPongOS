@@ -34,7 +34,7 @@ ppos_data.h
 ppos.h
 ppos_core.c
 ```
-### [Escalonamento por prioridades](https://wiki.inf.ufpr.br/maziero/doku.php?id=so:escalonador_por_prioridades)
+### [Escalonamento por prioridades](https://wiki.inf.ufpr.br/maziero/doku.php?id=so:escalonador_por_prioridades) (p4)
 Consiste em implentar o escalonamnto de prioridades das tarefas.
 #### Arquivos:
 ```
@@ -44,4 +44,23 @@ ppos_data.h
 ppos.h
 ppos_core.c
 ```
-
+### [Preempção e compartilhamento de tempo](https://wiki.inf.ufpr.br/maziero/doku.php?id=so:preempcao_por_tempo) (p5)
+Consiste em implementar limites de tempo para as tarefas usartem a CPU, anteriormente o sistema era cooperativo, agora uma tarefa pode ser retirada da CPU antes de terminar sua execucao.
+#### Arquivos:
+```
+queue.h
+queue.c
+ppos_data.h
+ppos.h
+ppos_core.c
+```
+### [Contabilização de tarefas](https://wiki.inf.ufpr.br/maziero/doku.php?id=so:contabilizacao) (p6)
+Agora vamos contabilizar o tempo de CPU qye cada tarefa usou.
+#### Arquivos:
+```
+queue.h
+queue.c
+ppos_data.h
+ppos.h
+ppos_core.c
+```
