@@ -187,7 +187,7 @@ void tratador_ticks(int signum){
     else
       task_yield();
   }
-  //else N faz nada pq o uma tarefa de sistema esta rodando ou o sinal foi outro
+  //else {} N faz nada pq o uma tarefa de sistema esta rodando ou o sinal foi outro
 
 }
 
@@ -294,7 +294,7 @@ void despachante(void *ptr){
 
   //Precisa de um outro contexto para liberar a stack do despachante
   //free_stack_val(&despachante_ptr); 
-  exit(0);
+  task_exit(0);
 };
 
 // Funções Gerais ==============================================================
@@ -402,7 +402,7 @@ void task_exit (int exit_code) {
   //Se o despachante chamar, encerra o programa
   if(contextoAtual != &despachante_ptr)
     contextoAtual->status = TERMINADA;
-
+  
   //Volta para o despachante
   task_yield();
 }
@@ -465,6 +465,8 @@ void task_yield (){
   #ifdef DEBUG
   printf("DEBUG: (task_yield) Chamando o task_switch\n");
   #endif
+  
+  //Incrementa a ontagem de cpu do despachante
   task_switch(&despachante_ptr);
 }
 
