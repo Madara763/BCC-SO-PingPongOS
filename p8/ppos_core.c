@@ -21,6 +21,7 @@ typedef struct ppos_tempo_t
 typedef struct task_t
 {
   struct task_t *prev, *next ;		// ponteiros para usar em filas
+  struct task_t *dependentes;     // fila de tarefas que estao suspensas aguaradando o termino dessa
   int id ;				                // identificador da tarefa
   ucontext_t context ;			      // contexto armazenado da tarefa
   short status ;			            // pronta, rodando, suspensa, ...
@@ -105,6 +106,7 @@ int task_cria(task_t *task, task_t *prev, task_t *next, short status, short cria
 
   task->next = next;
   task->prev = prev;
+  task->dependentes = NULL;
   task->id = ID_Global;
   task->status = status;
   task->prioridade = 0;
@@ -156,13 +158,7 @@ void free_stack_val(task_t* task){
 
 //Atualiza a prioridade com um valor delta
 void task_atualiza_nice(task_t *task){
-  //debug
-  //#ifdef DEBUG
-  //printf("Atualizando prioridade:\n");
-  //printf("            prioridade atual: %d\n", task_getprio(task));
-  //printf("            prioridade nova: %d\n", task_getprio(task) - DELTA_PRIORIDADE);
-  //#endif
-  //printf("Atualizando prioridade:\n");
+
   //Percorre toda a fila 
   int tamfila = queue_size(fila_tasks);
 
@@ -211,7 +207,11 @@ task_t* scheduler(){
     aux = aux->next;
   }
   
-  //printf("tarefa escolhida -> nice: %d  prio: %d\n", proxima->nice, proxima->prioridade);
+  //debug
+  #ifdef DEBUG
+  printf("DEBUG: (scheduler) Tarefa escolhida -> nice: %d  prio: %d\n", proxima->nice, proxima->prioridade);
+  #endif
+
   task_atualiza_nice(proxima);
   task_setnice(proxima, task_getprio(proxima));
   return (task_t*)proxima;
@@ -231,9 +231,6 @@ void despachante(void *ptr){
   else
     printf("DEBUG: (despachante) primeiro na fila_task = NULL\n");
   #endif
-
-  //queue_size(fila_tasks);
-  //exit(0);
 
   task_t* proxima;
   while(queue_size(fila_tasks)){
@@ -267,6 +264,7 @@ void despachante(void *ptr){
         
         break;
       case SUSPENSA:
+        printf("DEBUG: (despachante) task id (%d) esta suspensa\n", contextoAnterior->id);
         break;
 
       default:
@@ -396,7 +394,9 @@ void task_exit (int exit_code) {
   contextoAtual->tempo.tmp_cpu += (systime() - tmp_ini_task_atual );
 
   //impressao para o p6
-  printf("Task %d exit: execution time %ld ms, processor time %ld ms, %ld activations\n", contextoAtual->id, contextoAtual->tempo.tmp_exec, contextoAtual->tempo.tmp_cpu, contextoAtual->ativacoes);
+  printf("Task %d exit: execution time %ld ms, processor time %ld ms, %ld activations\n",
+          contextoAtual->id, contextoAtual->tempo.tmp_exec,
+          contextoAtual->tempo.tmp_cpu, contextoAtual->ativacoes);
   
   //Se outra task chamar o task_exit, retorna para o despachante
   //Se o despachante chamar, encerra o programa
@@ -450,7 +450,18 @@ void task_yield (){
 
   if(contextoAtual->status == TERMINADA){ //task_exit seta esse status
     queue_remove(&fila_tasks, (queue_t*)contextoAtual);
-    queue_append(&fila_tasks_terminadas, (queue_t*)contextoAtual);   
+    queue_append(&fila_tasks_terminadas, (queue_t*)contextoAtual);  
+    
+    //Acorda as que dependiam dela
+    task_t *aux, *ini = contextoAtual->dependentes;
+    if(ini)
+      aux = ini->next;
+
+    while(aux != ini && aux != NULL ){
+      task_awake(aux, &contextoAtual->dependentes);
+    }
+    task_awake(ini, &contextoAtual->dependentes);
+
   }
   else{
     //Contabiliza o tempo de execucao
@@ -492,3 +503,46 @@ int task_getprio (task_t *task) {
   return contextoAtual->prioridade;
 }
 
+// suspende a tarefa atual,
+// transferindo-a da fila de prontas para a fila "queue"
+void task_suspend (task_t **queue) {
+  if(!*queue){ 
+    fprintf(stderr, "Tarefa %d esta tentando esperar uma tarefa que nao existe.\n", task_id());
+    exit(0);
+  }
+  
+  //debug
+  #ifdef DEBUG
+  printf("DEBUG: (task_suspend) id atual = %d d\n", contextoAtual->id);
+  #endif
+
+  queue_remove(&fila_tasks, (queue_t*)contextoAtual); //remove das prontas
+  contextoAtual->status = SUSPENSA; //muda para suspensa
+  queue_append((queue_t**) (*queue)->dependentes, (queue_t*)contextoAtual); //insere a tarefa atual nos dependetentes de
+  task_switch(&despachante_ptr); //volta para o despachante
+}
+
+// acorda a tarefa indicada,
+// trasferindo-a da fila "queue" para a fila de prontas
+void task_awake (task_t *task, task_t **queue) {
+  if(*queue){
+    queue_remove((queue_t**)queue, (queue_t*)task); //Remove da fila 
+    task->status = PRONTA;
+    queue_append(&fila_tasks, (queue_t*)task);
+  }
+
+}
+
+// a tarefa corrente aguarda o encerramento de outra task
+int task_wait (task_t *task) {
+  //debug
+  #ifdef DEBUG
+  printf("DEBUG: (task_wait) id atual = %d quer esperar id = %d\n", contextoAtual->id, task->id);
+  #endif
+  //Se a tarefa n existe
+  if(!task) 
+    return -1;
+  //Suspende a tarefa atual
+  task_suspend(&contextoAtual);
+
+}

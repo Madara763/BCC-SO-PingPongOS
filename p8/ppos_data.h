@@ -26,6 +26,7 @@ typedef struct ppos_tempo_t
 typedef struct task_t
 {
   struct task_t *prev, *next ;		// ponteiros para usar em filas
+  struct task_t *dependentes;     // fila de tarefas que estao suspensas aguaradando o termino dessa
   int id ;				                // identificador da tarefa
   ucontext_t context ;			      // contexto armazenado da tarefa
   short status ;			            // pronta, rodando, suspensa, ...
@@ -36,6 +37,7 @@ typedef struct task_t
   int tipo;                       // Tipo de tarefa, pode ser de SISTEMA (0) ou USUARIO (1)
   ppos_tempo_t tempo;             // Define campos para monitoramento de tempos da tarefa
   __uint64_t ativacoes;           // Quantas vezes a tarefa assumiu a CPU
+
   // ... (outros campos serão adicionados mais tarde)
 } task_t ;
 
