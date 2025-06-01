@@ -64,3 +64,14 @@ ppos_data.h
 ppos.h
 ppos_core.c
 ```
+
+### [Tarefas Suspensas](https://wiki.inf.ufpr.br/maziero/doku.php?id=so:tarefas_suspensas) (p8)  
+Implementamos a suspensao de tarefas e tarefas podem esparar o termino da execucao de outra.  
+#### Arquivos:
+```
+queue.h
+queue.c
+ppos_data.h
+ppos.h
+ppos_core.c
+```
