@@ -30,6 +30,7 @@ typedef struct task_t
   int prioridade;                 // Prioridade estatica da tarefa 
   int nice;                       // Valor do Nice(que deve estar entre -20 e +20)
   int tipo;                       // Tipo de tarefa, pode ser de SISTEMA (0) ou USUARIO (1)
+  int exit_code;                  // Codigo de encerramento da task (padrao eh 0)
   ppos_tempo_t tempo;             // Define campos para monitoramento de tempos da tarefa
   __uint64_t ativacoes;           // Quantas vezes a tarefa assumiu a CPU
   // ... (outros campos serão adicionados mais tarde)
@@ -112,6 +113,7 @@ int task_cria(task_t *task, task_t *prev, task_t *next, short status, short cria
   task->prioridade = 0;
   task->nice = 0;
   task->tipo = USUARIO;
+  task->exit_code = 0;
 
   task->tempo.tmp_criacao = systime();
   task->tempo.tmp_cpu = 0;
@@ -264,7 +266,10 @@ void despachante(void *ptr){
         
         break;
       case SUSPENSA:
+        //debug
+        #ifdef DEBUG
         printf("DEBUG: (despachante) task id (%d) esta suspensa\n", contextoAnterior->id);
+        #endif
         break;
 
       default:
@@ -384,8 +389,7 @@ int task_id () {
 void task_exit (int exit_code) {
   //debug
   #ifdef DEBUG
-  printf("DEBUG: (task_exit) id atual = %d\n", contextoAtual->id);
-  printf("DEBUG: (task_exit) id despachante = %d\n", despachante_ptr.id);
+  printf("DEBUG: (task_exit) id atual = %d saindo com exit_code %d\n", contextoAtual->id, exit_code);
   #endif
 
   //Salva o tempo de vida da tarefa
@@ -402,6 +406,9 @@ void task_exit (int exit_code) {
   //Se o despachante chamar, encerra o programa
   if(contextoAtual != &despachante_ptr)
     contextoAtual->status = TERMINADA;
+  
+  //Atualiza o exit_code da task
+  contextoAtual->exit_code = exit_code;
   
   //Volta para o despachante
   task_yield();
@@ -452,16 +459,28 @@ void task_yield (){
     queue_remove(&fila_tasks, (queue_t*)contextoAtual);
     queue_append(&fila_tasks_terminadas, (queue_t*)contextoAtual);  
     
+    //debug
+    #ifdef DEBUG
+    printf("DEBUG: (task_yield) id atual = %d\n", contextoAtual->id);
+    #endif
+
     //Acorda as que dependiam dela
-    task_t *aux, *ini = contextoAtual->dependentes;
-    if(ini)
-      aux = ini->next;
+    if(contextoAtual->dependentes){
+      //debug
+      #ifdef DEBUG
+      printf("DEBUG: (task_yield) id atual = %d tem dependentes\n", contextoAtual->id);
+      #endif
 
-    while(aux != ini && aux != NULL ){
-      task_awake(aux, &contextoAtual->dependentes);
+      task_t *aux, *ini = contextoAtual->dependentes;
+      if(ini)
+        aux = ini->next;
+
+      while(aux != ini){
+        task_awake(aux, &contextoAtual->dependentes);
+      }
+      task_awake(ini, &contextoAtual->dependentes);
     }
-    task_awake(ini, &contextoAtual->dependentes);
-
+    
   }
   else{
     //Contabiliza o tempo de execucao
@@ -513,24 +532,31 @@ void task_suspend (task_t **queue) {
   
   //debug
   #ifdef DEBUG
-  printf("DEBUG: (task_suspend) id atual = %d d\n", contextoAtual->id);
+  printf("DEBUG: (task_suspend) id atual = %d\n", contextoAtual->id);
   #endif
 
   queue_remove(&fila_tasks, (queue_t*)contextoAtual); //remove das prontas
   contextoAtual->status = SUSPENSA; //muda para suspensa
-  queue_append((queue_t**) (*queue)->dependentes, (queue_t*)contextoAtual); //insere a tarefa atual nos dependetentes de
+  queue_append((queue_t**) &(*queue)->dependentes, (queue_t*)contextoAtual); //insere a tarefa atual nos dependetentes de
   task_switch(&despachante_ptr); //volta para o despachante
 }
 
 // acorda a tarefa indicada,
 // trasferindo-a da fila "queue" para a fila de prontas
 void task_awake (task_t *task, task_t **queue) {
+  //debug
+  #ifdef DEBUG
+  if (*queue)
+    printf("DEBUG: (task_awake) acordando id = %d\n", task->id);
+  else
+    printf("DEBUG: (task_awake) acordando id = nulo\n");
+  #endif 
+
   if(*queue){
     queue_remove((queue_t**)queue, (queue_t*)task); //Remove da fila 
     task->status = PRONTA;
     queue_append(&fila_tasks, (queue_t*)task);
   }
-
 }
 
 // a tarefa corrente aguarda o encerramento de outra task
@@ -543,6 +569,7 @@ int task_wait (task_t *task) {
   if(!task) 
     return -1;
   //Suspende a tarefa atual
-  task_suspend(&contextoAtual);
+  task_suspend(&task);
 
+  return task->exit_code;
 }

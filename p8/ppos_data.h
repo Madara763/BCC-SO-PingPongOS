@@ -35,6 +35,7 @@ typedef struct task_t
   int prioridade;                 // Prioridade estatica da tarefa 
   int nice;                       // Valor do Nice(que deve estar entre -20 e +20)
   int tipo;                       // Tipo de tarefa, pode ser de SISTEMA (0) ou USUARIO (1)
+  int exit_code;                  // Codigo de encerramento da task (padrao eh 0)
   ppos_tempo_t tempo;             // Define campos para monitoramento de tempos da tarefa
   __uint64_t ativacoes;           // Quantas vezes a tarefa assumiu a CPU
 

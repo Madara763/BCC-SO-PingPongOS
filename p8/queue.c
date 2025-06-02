@@ -86,6 +86,10 @@ void queue_print (char *name, queue_t *queue, void print_elem (void*) ) {
 // Retorno: 0 se sucesso, <0 se ocorreu algum erro
 
 int queue_append (queue_t **queue, queue_t *elem){
+  //debug
+  #ifdef DEBUG
+  printf("DEBUG: (queue_append) Inicio .\n");
+  #endif
   //Verificacoes
   if(!queue){
     fprintf(stderr, "A fila nao existe\n");
