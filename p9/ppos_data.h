@@ -38,7 +38,8 @@ typedef struct task_t
   int exit_code;                  // Codigo de encerramento da task (padrao eh 0)
   ppos_tempo_t tempo;             // Define campos para monitoramento de tempos da tarefa
   __uint64_t ativacoes;           // Quantas vezes a tarefa assumiu a CPU
-
+  int tempo_sono;                 // Tempo em que comecou a dormir
+  int tempo_sono_restante;        // Tempo restante em que a tarefa tem que ficar dormindo
   // ... (outros campos serão adicionados mais tarde)
 } task_t ;
 

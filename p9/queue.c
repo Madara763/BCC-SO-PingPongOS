@@ -33,17 +33,8 @@ int queue_size (queue_t *queue){
   queue_t *ini = queue ;       // aponta elemento que sera tratado como inicial 
   queue_t *aux = queue->next;  // Auxiliar
 
-  //debug
-  #ifdef DEBUG
-  printf("DEBUG: (queue_size) ini->id = %d\n", ((task_t*) queue)->id);
-  #endif
-
   int tam=1;
   while(aux != ini){
-    //debug
-    #ifdef DEBUG
-    printf("DEBUG: (queue_size) aux->id = %d\n", ((task_t*) aux)->id);
-    #endif
     tam++;
     aux = aux->next;
   }
@@ -92,15 +83,15 @@ int queue_append (queue_t **queue, queue_t *elem){
   #endif
   //Verificacoes
   if(!queue){
-    fprintf(stderr, "A fila nao existe\n");
+    //fprintf(stderr, "A fila nao existe\n");
       return -1;
     }
   if(!elem){
-    fprintf(stderr, "O elemento nao existe\n");
+    //fprintf(stderr, "O elemento nao existe\n");
     return -2;
   }
   if(elem->next || elem->prev ){
-    fprintf(stderr, "O elemento esta em outra fila\n");
+    //fprintf(stderr, "O elemento esta em outra fila (queue_append)\n");
     return -3;
   }
   //debug
@@ -155,15 +146,15 @@ int queue_remove (queue_t **queue, queue_t *elem) {
   #endif
   //Verificacoes
   if(!queue){
-    fprintf(stderr, "A fila nao existe\n");
+    //fprintf(stderr, "A fila nao existe\n");
       return -1;
     }
   if(!(*queue)){
-    fprintf(stderr, "A fila esta vazia\n");
+    //fprintf(stderr, "A fila esta vazia\n");
     return -2;
   }
   if(!elem){
-    fprintf(stderr, "O elemento nao existe\n");
+    //fprintf(stderr, "O elemento nao existe\n");
     return -3;
   }
   

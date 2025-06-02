@@ -33,6 +33,10 @@ typedef struct task_t
   int exit_code;                  // Codigo de encerramento da task (padrao eh 0)
   ppos_tempo_t tempo;             // Define campos para monitoramento de tempos da tarefa
   __uint64_t ativacoes;           // Quantas vezes a tarefa assumiu a CPU
+
+  int tempo_sono;                 // Tempo em que comecou a dormir
+  int tempo_sono_restante;        // Tempo restante em que a tarefa tem que ficar dormindo
+  
   // ... (outros campos serão adicionados mais tarde)
 } task_t ;
 */
@@ -48,6 +52,7 @@ typedef struct task_t
 #define PRONTA 0
 #define TERMINADA 1
 #define SUSPENSA 2
+#define DORMINDO 3
 
 //tipo de tarefa
 #define SISTEMA 0
@@ -62,6 +67,7 @@ task_t contextoMain, *contextoAnterior = NULL, *contextoAtual = NULL, despachant
 int ID_Global=0;                         // Contem o valor do prox id de task que sera criado
 queue_t *fila_tasks = NULL;              // Cria a fila de tarefas
 queue_t *fila_tasks_terminadas = NULL;   // Cria a fila de tarefas finalizadas para liberar memoria
+queue_t *fila_tasks_dormindo = NULL;     // Cria a fila de tarefas que estao dormindo por um periodo de tempo
 
 struct sigaction action;                 // Definida para usar um tratador de sinal
 struct itimerval timer;                  // Usada para lancar os sinais
@@ -114,6 +120,9 @@ int task_cria(task_t *task, task_t *prev, task_t *next, short status, short cria
   task->nice = 0;
   task->tipo = USUARIO;
   task->exit_code = 0;
+
+  task->tempo_sono = 0;
+  task->tempo_sono_restante = 0;
 
   task->tempo.tmp_criacao = systime();
   task->tempo.tmp_cpu = 0;
@@ -189,6 +198,45 @@ void tratador_ticks(int signum){
 
 }
 
+//Funcao atualiza o tempo que resta para as funcoes continuarem dormindo
+//Se o tempo acabar , remove elas da fila de dormindo e insere na fica de prontas
+int alvorada(int ultima_alvorada){
+  
+  //debug
+  #ifdef DEBUG
+  //printf("DEBUG: (alvorada) verificacao geral no tempo: %d \n", systime());
+  #endif
+
+  if((systime() - ultima_alvorada) ){ //Se a ultima verificacao foi nesse mesmo ms n verifica nada
+    
+    task_t *aux = (task_t*)fila_tasks_dormindo;
+
+    //Percorre toda a fila 
+    int tamfila = queue_size(fila_tasks_dormindo);
+
+    int tmp_dormido; 
+    for(int i = 0; i < tamfila; i++){
+      //Verifica se ja se passou todo o tempo de sono
+      tmp_dormido = systime() - (aux->tempo_sono); //Tempo ja dormido
+
+      if(tmp_dormido >= (aux->tempo_sono_restante)){ //Dormiu mais ou a quantidade que devia      
+        //printf("Acordando id = %d depois de %d tempos dormido %d \n", )
+        aux->tempo_sono = 0;
+        aux->tempo_sono_restante = 0;
+
+        queue_remove(&fila_tasks_dormindo, (queue_t*)aux);
+        aux->status = PRONTA;
+        queue_append(&fila_tasks, (queue_t*)aux);  
+      }
+
+      aux = aux->next;
+    }
+    ultima_alvorada = systime();
+  }
+
+  return ultima_alvorada;
+}
+
 //Atualiza o ponteiro de proxima tarefa, coloca a atual no final da fila
 //Retorna um ponteiro para a tarefa a ser executada no momento
 //Se prioridade dinamica (nice) != 0 compara ela, prioriza a menor entre as dinamicas e estaticas
@@ -211,12 +259,15 @@ task_t* scheduler(){
   
   //debug
   #ifdef DEBUG
-  printf("DEBUG: (scheduler) Tarefa escolhida -> nice: %d  prio: %d\n", proxima->nice, proxima->prioridade);
+  if(proxima)
+    printf("DEBUG: (scheduler) Tarefa escolhida -> nice: %d  prio: %d\n", proxima->nice, proxima->prioridade);
   #endif
 
-  task_atualiza_nice(proxima);
-  task_setnice(proxima, task_getprio(proxima));
-  return (task_t*)proxima;
+  if(proxima){
+    task_atualiza_nice(proxima);
+    task_setnice(proxima, task_getprio(proxima));
+  }
+    return (task_t*)proxima;
 }
 
 //Funcao e chamada sempre que uma tarefa eh encerrada
@@ -233,13 +284,19 @@ void despachante(void *ptr){
   else
     printf("DEBUG: (despachante) primeiro na fila_task = NULL\n");
   #endif
-
+  
+  int ultima_alvorada = systime();
   task_t* proxima;
-  while(queue_size(fila_tasks)){
+
+  while(queue_size(fila_tasks) || queue_size(fila_tasks_dormindo) ){
     //debug
     #ifdef DEBUG
-    printf("DEBUG: (despachante) queue_size(fila_tasks) = %d\n",queue_size(fila_tasks));
+    //printf("DEBUG: (despachante) queue_size(fila_tasks) = %d\n",queue_size(fila_tasks));
+    //printf("DEBUG: (despachante) queue_size(fila_tasks_dormindo) = %d\n",queue_size(fila_tasks_dormindo));
     #endif 
+
+    ultima_alvorada = alvorada(ultima_alvorada);
+
     proxima = scheduler();
     
     if(proxima){
@@ -454,42 +511,83 @@ void task_yield (){
   #ifdef DEBUG
   printf("DEBUG: (task_yield) id atual = %d\n", contextoAtual->id);
   #endif
-
-  if(contextoAtual->status == TERMINADA){ //task_exit seta esse status
-    queue_remove(&fila_tasks, (queue_t*)contextoAtual);
-    queue_append(&fila_tasks_terminadas, (queue_t*)contextoAtual);  
-    
-    //debug
-    #ifdef DEBUG
-    printf("DEBUG: (task_yield) id atual = %d\n", contextoAtual->id);
-    #endif
-
-    //Acorda as que dependiam dela
-    if(contextoAtual->dependentes){
+  
+  switch(contextoAtual->status)
+  {
+    case TERMINADA:
+      queue_remove(&fila_tasks, (queue_t*)contextoAtual);
+      queue_append(&fila_tasks_terminadas, (queue_t*)contextoAtual);  
+      
       //debug
       #ifdef DEBUG
-      printf("DEBUG: (task_yield) id atual = %d tem dependentes\n", contextoAtual->id);
+      printf("DEBUG: (task_yield) id atual = %d\n", contextoAtual->id);
       #endif
 
-      task_t *aux, *ini = contextoAtual->dependentes;
-      if(ini)
-        aux = ini->next;
+      //Acorda as que dependiam dela
+      if(contextoAtual->dependentes){
+        //debug
+        #ifdef DEBUG
+        printf("DEBUG: (task_yield) id atual = %d tem dependentes\n", contextoAtual->id);
+        #endif
 
-      while(aux != ini){
-        task_awake(aux, &contextoAtual->dependentes);
+        task_t *aux, *ini = contextoAtual->dependentes;
+        if(ini)
+          aux = ini->next;
+
+        while(aux != ini){
+          task_awake(aux, &contextoAtual->dependentes);
+        }
+        task_awake(ini, &contextoAtual->dependentes);
       }
-      task_awake(ini, &contextoAtual->dependentes);
-    }
-    
-  }
-  else{
-    //Contabiliza o tempo de execucao
-    contextoAtual->tempo.tmp_cpu += (systime() - tmp_ini_task_atual );
+      break;
+    case DORMINDO:
 
-    contextoAtual->status = PRONTA; 
-    queue_remove(&fila_tasks, (queue_t*)contextoAtual);
-    queue_append(&fila_tasks, (queue_t*)contextoAtual);    
+      break;
+    default:
+      //Contabiliza o tempo de execucao
+      contextoAtual->tempo.tmp_cpu += (systime() - tmp_ini_task_atual );
+
+      contextoAtual->status = PRONTA; 
+      queue_remove(&fila_tasks, (queue_t*)contextoAtual);
+      queue_append(&fila_tasks, (queue_t*)contextoAtual); 
+      break;
   }
+
+  // if(contextoAtual->status == TERMINADA){ //task_exit seta esse status
+  //   queue_remove(&fila_tasks, (queue_t*)contextoAtual);
+  //   queue_append(&fila_tasks_terminadas, (queue_t*)contextoAtual);  
+    
+  //   //debug
+  //   #ifdef DEBUG
+  //   printf("DEBUG: (task_yield) id atual = %d\n", contextoAtual->id);
+  //   #endif
+
+  //   //Acorda as que dependiam dela
+  //   if(contextoAtual->dependentes){
+  //     //debug
+  //     #ifdef DEBUG
+  //     printf("DEBUG: (task_yield) id atual = %d tem dependentes\n", contextoAtual->id);
+  //     #endif
+
+  //     task_t *aux, *ini = contextoAtual->dependentes;
+  //     if(ini)
+  //       aux = ini->next;
+
+  //     while(aux != ini){
+  //       task_awake(aux, &contextoAtual->dependentes);
+  //     }
+  //     task_awake(ini, &contextoAtual->dependentes);
+  //   }
+    
+  // }
+  // else{
+  //   //Contabiliza o tempo de execucao
+  //   contextoAtual->tempo.tmp_cpu += (systime() - tmp_ini_task_atual );
+
+  //   contextoAtual->status = PRONTA; 
+  //   queue_remove(&fila_tasks, (queue_t*)contextoAtual);
+  //   queue_append(&fila_tasks, (queue_t*)contextoAtual);    
+  // }
 
   //debug
   #ifdef DEBUG
@@ -572,4 +670,23 @@ int task_wait (task_t *task) {
   task_suspend(&task);
 
   return task->exit_code;
+}
+
+// suspende a tarefa corrente por t milissegundos
+void task_sleep (int t) {
+  //debug
+  #ifdef DEBUG
+  printf("DEBUG: (task_sleep) id atual = %d quer dormir = %d\n", contextoAtual->id, t);
+  #endif
+  if(t>=0){
+    queue_remove(&fila_tasks, (queue_t*)contextoAtual);
+    contextoAtual->status = DORMINDO;
+    contextoAtual->tempo_sono = systime();
+    contextoAtual->tempo_sono_restante = t;
+    queue_append(&fila_tasks_dormindo, (queue_t*)contextoAtual);  
+    task_yield();
+  }
+  else{
+    fprintf(stderr, "Tentando dormir a task %d por tempo negativo\n", task_id());
+  }
 }
