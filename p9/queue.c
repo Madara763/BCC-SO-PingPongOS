@@ -14,7 +14,9 @@ typedef struct queue_t
 } queue_t ;
 */
 
-#ifdef DEBUG
+//#define DEBUG_FILA
+
+#ifdef DEBUG_FILA
 typedef struct task_t
 {
   struct task_t *prev, *next ;		// ponteiros para usar em filas
@@ -48,7 +50,6 @@ int queue_size (queue_t *queue){
 // usa a biblioteca. Essa função deve ter o seguinte protótipo:
 //
 // void print_elem (void *ptr) ; // ptr aponta para o elemento a imprimir
-
 void queue_print (char *name, queue_t *queue, void print_elem (void*) ) {
   queue_t *ini = queue ;  // aponta elemento que sera tratado como inicial
   queue_t *aux = NULL;
@@ -77,32 +78,41 @@ void queue_print (char *name, queue_t *queue, void print_elem (void*) ) {
 // Retorno: 0 se sucesso, <0 se ocorreu algum erro
 
 int queue_append (queue_t **queue, queue_t *elem){
-  //debug
-  #ifdef DEBUG
-  printf("DEBUG: (queue_append) Inicio .\n");
+  //DEBUG_FILA
+  #ifdef DEBUG_FILA
+  printf("DEBUG_FILA: (queue_append) Inicio .\n");
   #endif
   //Verificacoes
   if(!queue){
-    //fprintf(stderr, "A fila nao existe\n");
+    //DEBUG_FILA
+    #ifdef DEBUG_FILA
+    fprintf(stderr, "A fila nao existe\n");
+    #endif
       return -1;
     }
   if(!elem){
-    //fprintf(stderr, "O elemento nao existe\n");
+    //DEBUG_FILA
+    #ifdef DEBUG_FILA
+    fprintf(stderr, "O elemento nao existe\n");
+    #endif
     return -2;
   }
   if(elem->next || elem->prev ){
-    //fprintf(stderr, "O elemento esta em outra fila (queue_append)\n");
+    //DEBUG_FILA
+    #ifdef DEBUG_FILA
+    fprintf(stderr, "O elemento esta em outra fila (queue_append)\n");
+    #endif
     return -3;
   }
-  //debug
-  #ifdef DEBUG
-  printf("DEBUG: (queue_append) Verificacoes feitas.\n");
+  //DEBUG_FILA
+  #ifdef DEBUG_FILA
+  printf("DEBUG_FILA: (queue_append) Verificacoes feitas.\n");
   #endif
 
   if(!(*queue)){  //Fila vazia
-    //debug
-    #ifdef DEBUG
-    printf("DEBUG: (queue_append) Fila Vazia.\n");
+    //DEBUG_FILA
+    #ifdef DEBUG_FILA
+    printf("DEBUG_FILA: (queue_append) Fila Vazia.\n");
     #endif
     elem->prev = elem;
     elem->next = elem;
@@ -111,9 +121,9 @@ int queue_append (queue_t **queue, queue_t *elem){
   else{ //insere no final da fila nao vazia
     queue_t *aux = (*queue)->prev;
     
-    //debug
-    #ifdef DEBUG
-    printf("DEBUG: (queue_append) Insere na Fila.\n");
+    //DEBUG_FILA
+    #ifdef DEBUG_FILA
+    printf("DEBUG_FILA: (queue_append) Insere na Fila.\n");
     #endif
 
     aux->next = elem;
@@ -122,9 +132,9 @@ int queue_append (queue_t **queue, queue_t *elem){
     (*queue)->prev = elem;
   }
 
-  //debug
-  #ifdef DEBUG
-  printf("DEBUG: (queue_append) Inserido.\n");
+  //DEBUG_FILA
+  #ifdef DEBUG_FILA
+  printf("DEBUG_FILA: (queue_append) Inserido.\n");
   #endif
 
   return 0;
@@ -140,21 +150,30 @@ int queue_append (queue_t **queue, queue_t *elem){
 // Retorno: 0 se sucesso, <0 se ocorreu algum erro
 
 int queue_remove (queue_t **queue, queue_t *elem) {
-  //debug
-  #ifdef DEBUG
-  printf("DEBUG: (queue_remove) Entrou no remove.\n");
+  //DEBUG_FILA
+  #ifdef DEBUG_FILA
+  printf("DEBUG_FILA: (queue_remove) Entrou no remove.\n");
   #endif
   //Verificacoes
   if(!queue){
-    //fprintf(stderr, "A fila nao existe\n");
-      return -1;
+    //DEBUG_FILA
+    #ifdef DEBUG_FILA
+    fprintf(stderr, "A fila nao existe\n");
+    #endif
+    return -1;
     }
   if(!(*queue)){
-    //fprintf(stderr, "A fila esta vazia\n");
+    //DEBUG_FILA
+    #ifdef DEBUG_FILA
+    fprintf(stderr, "A fila esta vazia\n");
+    #endif
     return -2;
   }
   if(!elem){
-    //fprintf(stderr, "O elemento nao existe\n");
+    //DEBUG_FILA
+    #ifdef DEBUG_FILA
+    fprintf(stderr, "O elemento nao existe\n");
+    #endif
     return -3;
   }
   
@@ -198,6 +217,10 @@ int queue_remove (queue_t **queue, queue_t *elem) {
   }
 
   //Caso o elemento nao existe na fila
+  //DEBUG_FILA
+  #ifdef DEBUG_FILA
+  fprintf(stderr, "O elemento nao existe nessa fila\n");
+  #endif
   return -4;
 
 }
