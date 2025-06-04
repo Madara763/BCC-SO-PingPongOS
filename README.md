@@ -76,7 +76,7 @@ ppos.h
 ppos_core.c
 ```
 
-### [Tarefas Dormindo](https://wiki.inf.ufpr.br/maziero/doku.php?id=so:tarefas_dormindo)  
+### [Tarefas Dormindo](https://wiki.inf.ufpr.br/maziero/doku.php?id=so:tarefas_dormindo) (p9)  
 Parecido com o anterior, mas agora a tarefas espera por um certo tempo e nao pelo termino de outra task.  
 #### Arquivos:  
 ```
