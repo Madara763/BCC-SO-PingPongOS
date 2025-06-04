@@ -51,7 +51,6 @@ typedef struct task_t
 #define PRONTA 0
 #define TERMINADA 1
 #define SUSPENSA 2
-#define DORMINDO 3
 
 //tipo de tarefa
 #define SISTEMA 0
@@ -314,12 +313,6 @@ void despachante(void *ptr){
         printf("DEBUG: (despachante) task id (%d) esta suspensa\n", contextoAnterior->id);
         #endif
         break;
-      case DORMINDO:
-        //debug
-        #ifdef DEBUG
-        printf("DEBUG: (despachante) task id (%d) esta dormindo\n", contextoAnterior->id);
-        #endif
-        break;
 
       default:
         break;
@@ -535,9 +528,7 @@ void task_yield (){
         task_awake(ini, &contextoAtual->dependentes);
       }
       break;
-    case DORMINDO:
 
-      break;
     default:
       //Contabiliza o tempo de execucao
       contextoAtual->tempo.tmp_cpu += (systime() - tmp_ini_task_atual );
@@ -582,21 +573,21 @@ int task_getprio (task_t *task) {
 // suspende a tarefa atual,
 // transferindo-a da fila de prontas para a fila "queue"
 void task_suspend (task_t **queue) {
-  if(!*queue){ 
-    fprintf(stderr, "Tarefa %d esta tentando esperar uma tarefa que nao existe.\n", task_id());
-    exit(0);
+  if (queue == NULL) {
+    fprintf(stderr, "Tarefa %d está tentando esperar uma tarefa que não existe.\n", task_id());
+    exit(1);
   }
-  
-  //debug
+
   #ifdef DEBUG
   printf("DEBUG: (task_suspend) id atual = %d\n", contextoAtual->id);
   #endif
 
-  queue_remove(&fila_tasks, (queue_t*)contextoAtual); //remove das prontas
-  contextoAtual->status = SUSPENSA; //muda para suspensa
-  queue_append((queue_t**) &(*queue)->dependentes, (queue_t*)contextoAtual); //insere a tarefa atual nos dependetentes de
-  task_switch(&despachante_ptr); //volta para o despachante
+  queue_remove((queue_t**)&fila_tasks, (queue_t*)contextoAtual);  // Remove da fila de prontas
+  contextoAtual->status = SUSPENSA;
+  queue_append((queue_t**)queue, (queue_t*)contextoAtual);        // Adiciona na fila passada
+  task_switch(&despachante_ptr);
 }
+
 
 // acorda a tarefa indicada,
 // trasferindo-a da fila "queue" para a fila de prontas
@@ -635,7 +626,7 @@ int task_wait (task_t *task) {
   }
 
   //Suspende a tarefa atual
-  task_suspend(&task);
+  task_suspend(&(task->dependentes));
 
   return task->exit_code;
 }
@@ -648,11 +639,8 @@ void task_sleep (int t) {
   #endif
 
   if(t>0){
-    queue_remove(&fila_tasks, (queue_t*)contextoAtual);
-    contextoAtual->status = DORMINDO;
     contextoAtual->acordar = systime() + t;
-    queue_append(&fila_tasks_dormindo, (queue_t*)contextoAtual);  
-    task_yield();
+    task_suspend((task_t**)&fila_tasks_dormindo);
   }
   else if(t!=0){
     fprintf(stderr, "Tentando dormir a task %d por tempo negativo\n", task_id());
