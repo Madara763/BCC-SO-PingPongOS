@@ -625,6 +625,15 @@ int task_wait (task_t *task) {
   //Se a tarefa n existe
   if(!task) 
     return -1;
+
+  if(task->status == TERMINADA){
+    //debug
+    #ifdef DEBUG
+    printf("task_wait: id (%d) tentando esperar id(%d) que esta ENCERRADA.\n", task_id(),task->id);
+    #endif
+    return -1;
+  }
+
   //Suspende a tarefa atual
   task_suspend(&task);
 
